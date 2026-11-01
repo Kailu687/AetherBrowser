@@ -421,6 +421,52 @@ await test('crashed tabs are recoverable', async () => {
   }, 'reloaded after crash');
 });
 
+const mod = (moduleId, method, payload) => invoke(ui, 'module:invoke', { moduleId, method, payload });
+
+await test('Writer: open from the Workbench, type a paper, autosave and export', async () => {
+  await ui.click('.wb-launch');
+  await ui.locator('.wb-tile', { hasText: 'Writer' }).first().click();
+  await ui.locator('.wr-tpl').first().click();
+  const editor = ui.locator('.ProseMirror').first();
+  await editor.waitFor({ timeout: 15_000 });
+  await editor.click();
+  await ui.keyboard.type('Slew rate limits large-signal bandwidth.');
+  await ui.keyboard.press('Enter');
+  await ui.keyboard.press('Tab');
+  await ui.keyboard.type('Indented paragraph.');
+  await until(async () => {
+    const docs = await mod('aether.writer', 'list');
+    return docs.some((d) => JSON.stringify(d).includes('Slew rate') || d.words > 3);
+  }, 'autosaved document', 15_000);
+  assert.equal(await ui.locator('.boundary').count(), 0, 'no error boundary in the Writer');
+  const md = await mod('aether.writer', 'createFromMarkdown', { title: 'E2E import', markdown: '# Intro\n\nText with **bold** [@smith2020].' });
+  const got = await mod('aether.writer', 'get', { id: md.id });
+  assert.equal(got.title, 'E2E import');
+  const pdf = await mod('aether.writer', 'pdf', { html: '<h1>Hello</h1><p>PDF</p>' });
+  assert.ok(pdf && (pdf.byteLength ?? pdf.length) > 500, 'PDF bytes produced');
+});
+
+await test('Module Store: install Research & Writing and open its apps', async () => {
+  const st = await mod('aether.modules', 'state');
+  const research = st.catalog.find((m) => m.id === 'aether.module.research');
+  assert.ok(research, 'research module in catalog');
+  await assert.rejects(mod('aether.module.research', 'library.list', {}).then((r) => { if (r && !r.error) throw new Error('reachable'); throw new Error('module-not-installed'); }), /module-not-installed/);
+  const after = await mod('aether.modules', 'install', { id: research.id, approved: research.permissions });
+  assert.ok(!after.error, JSON.stringify(after.error));
+  assert.ok(after.status.find((r) => r.id === research.id).active);
+  await ui.locator('.wb-tab.home').click();
+  for (const app of research.apps) {
+    await ui.locator('.wb-tab.home').click();
+    await until(async () => (await ui.locator('.wb-tile', { hasText: app.title }).count()) > 0, `tile ${app.title}`);
+    await ui.locator('.wb-tile', { hasText: app.title }).first().click();
+    await sleep(1200);
+    assert.equal(await ui.locator('.wb-app:not([hidden]) .boundary').count(), 0, `${app.title} rendered without error`);
+  }
+  const off = await mod('aether.modules', 'setEnabled', { id: research.id, enabled: false });
+  assert.equal(off.status.find((r) => r.id === research.id).active, false);
+  await ui.click('.wb-btn:has-text("Back to web")');
+});
+
 await app.close().catch(() => {});
 server.close();
 rmSync(userData, { recursive: true, force: true });
