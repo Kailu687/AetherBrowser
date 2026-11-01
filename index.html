@@ -331,7 +331,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
         <div class="layer-id">
           <span class="lv">Layer 3</span>
           <h3>AETHER Modules</h3>
-          <p>Installable toolkits for each discipline. Research &amp; Writing is in preview in today's download; the rest are being built. Each card says what the module will do and where its limits are.</p>
+          <p>Installable toolkits for each discipline. The launch ships one: Research &amp; Writing, in preview. The other modules come in later releases.</p>
         </div>
         <div class="labs" id="labs"></div>
       </article>
@@ -470,13 +470,12 @@ const RELEASE = {
 
 const VERSIONS = [
   { v: "0.4.0", date: "In development", status: "plan",
-    summary: "The first release with AETHER Modules. This is the plan, not a promise: anything that isn't finished and tested moves to a later version.",
+    summary: "Focused on the browser and the Research &amp; Writing module. This is the plan, not a promise: anything that isn't finished and tested moves to a later version.",
     groups: { "Planned": [
       "Module system: each module has a manifest with its version, dependencies, the permissions it asks for, and an integrity check before it installs.",
       "Modules never get your passwords, cookies, arbitrary files, shell commands or another module's data. Anything risky asks you first and runs in a restricted process.",
-      "First modules in progress: Research &amp; Writing, Electronics &amp; ECE, Computer Science &amp; Embedded Dev, and early Aerospace, Mechanical and Biotech tools.",
-      "Security hardening across the browser and the add-on boundary.",
-      "Google sign-in improvements."
+      "Research &amp; Writing: a fuller document editor (styles, tables, equations, page numbers, comments) and the Writing Intelligence panel.",
+      "Security hardening across the browser and the add-on boundary."
     ] } },
   { v: "0.3.2", date: "31 Oct 2026", status: "ship",
     summary: "Per-site switches for when ad blocking breaks a site.",
@@ -556,8 +555,7 @@ const STUDIO = [
   ["prev", "Notes and PDF annotations", "Per-workspace notebook and highlights on PDFs."],
   ["ship", "Engineering calculators", "Units-aware maths in the address bar and on any selected text."],
   ["plan", "Full document editor", "Styles, tables, equations, headers and footers, page numbers, comments, revisions. DOCX and PDF export, tested on complex documents before we call it compatible."],
-  ["plan", "Writing Intelligence", "Flags unsupported claims, citation problems and repetition. You accept, reject or edit each suggestion. No AI-detector evasion."],
-  ["plan", "Code editor, terminal, notebooks", "Uses the toolchains already on your machine and says clearly when one is missing."]
+  ["plan", "Writing Intelligence", "Flags unsupported claims, citation problems and repetition. You accept, reject or edit each suggestion. No AI-detector evasion."]
 ];
 const ICONS = {
   book: '<path d="M2.5 3.5c2-.8 3.8-.6 5.5.6 1.7-1.2 3.5-1.4 5.5-.6v9c-2-.8-3.8-.6-5.5.6-1.7-1.2-3.5-1.4-5.5-.6zM8 4.1v9"/>',
@@ -671,13 +669,14 @@ function items(list, el) {
 }
 items(CORE, $("#coreItems"));
 items(STUDIO, $("#studioItems"));
-$("#labs").innerHTML = MODULES.map(([ic, t, st, d, lim]) => `
+$("#labs").innerHTML = MODULES.filter(m => m[2] !== "plan").map(([ic, t, st, d, lim]) => `
   <div class="lab">
     <div class="lab-top"><span class="lab-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[ic]}</svg></span><h4>${t}</h4></div>
     ${pill(st)}
     <p>${d}</p>
     <p class="limit"><b>Limits:</b> ${lim}</p>
   </div>`).join("");
+$("#labs").insertAdjacentHTML("beforeend", `<div class="lab later"><h4>Coming later</h4>${pill("plan")}<p>${MODULES.filter(m => m[2] === "plan").map(m => m[1]).join(" · ")}</p><p class="limit">Each module ships only once it works and is tested.</p></div>`);
 
 /* explorer */
 let exShot = 0, exCur = EXPLORE[0];
