@@ -1,0 +1,31 @@
+{
+  "name": "aether",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AETHER: a privacy-focused, local-first engineering and research browser",
+  "license": "MPL-2.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @aether/desktop",
+    "build": "npm run build -w @aether/desktop",
+    "start": "npm run start -w @aether/desktop",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:e2e": "npm run test:e2e -w @aether/desktop",
+    "dist:win": "npm run dist:win -w @aether/desktop"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@types/markdown-it": "^14.2.0",
+    "@types/node": "^22.20.5",
+    "jsdom": "^26.1.0",
+    "typescript": "~5.9.2",
+    "vitest": "^3.2.7"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}

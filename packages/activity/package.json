@@ -1,0 +1,14 @@
+{
+  "name": "@aether/activity",
+  "version": "0.1.0",
+  "description": "Local-only browsing time tracking, reports and dashboard for AETHER.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "files": ["src"],
+  "dependencies": {
+    "tldts": "^7.0.0"
+  }
+}

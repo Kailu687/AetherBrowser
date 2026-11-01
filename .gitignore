@@ -1,0 +1,9 @@
+node_modules/
+dist/
+out/
+release/
+*.log
+.vite/
+test-results/
+coverage/
+.aether-sync/

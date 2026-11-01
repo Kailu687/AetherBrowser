@@ -1,0 +1,30 @@
+{
+  "name": "@aether/paper-editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Paper writer: templates (IEEE, APA, lab report, thesis, literature review), live citations and bibliography, source and quality checks, transparent AI-assistance log, Markdown/LaTeX/BibTeX/HTML export.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./ui": "./src/ui/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aether/research-core": "*",
+    "@aether/citations": "*",
+    "@aether/notebook": "*",
+    "markdown-it": "^14.1.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "jsdom": "^25.0.1"
+  },
+  "license": "MIT"
+}

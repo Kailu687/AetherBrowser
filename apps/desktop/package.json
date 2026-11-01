@@ -1,0 +1,104 @@
+{
+  "name": "@aether/desktop",
+  "productName": "AETHER",
+  "version": "0.3.2",
+  "private": true,
+  "description": "AETHER: a privacy-focused, local-first engineering and research browser",
+  "license": "MPL-2.0",
+  "author": "AETHER contributors",
+  "main": "dist/main.cjs",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "electron .",
+    "dev": "node scripts/dev.mjs",
+    "test:e2e": "node scripts/build.mjs && node test/e2e/run.mjs",
+    "dist:win": "node scripts/build.mjs && electron-builder --win --x64 && node scripts/write-manifest.mjs",
+    "dist:dir": "node scripts/build.mjs && electron-builder --dir"
+  },
+  "devDependencies": {
+    "@aether/omnibox": "0.1.0",
+    "@aether/pdf-viewer": "*",
+    "@aether/plugin-api": "0.1.0",
+    "@aether/protection-module": "0.1.0",
+    "@aether/protection-ui": "0.1.0",
+    "@aether/research-module": "*",
+    "@aether/storage": "0.1.0",
+    "@anthropic-ai/sdk": "^1.3.0",
+    "@mozilla/readability": "^0.6.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "electron": "38.8.6",
+    "electron-builder": "^26.0.12",
+    "esbuild": "^0.25.9",
+    "katex": "^0.18.11",
+    "pdfjs-dist": "4.10.38",
+    "playwright-core": "^1.64.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "resedit": "^3.1.0",
+    "vite": "^7.1.5"
+  },
+  "build": {
+    "appId": "dev.aether.browser",
+    "productName": "AETHER",
+    "copyright": "AETHER contributors",
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "electronLanguages": [
+      "en-US",
+      "en-GB",
+      "hi",
+      "ta"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "resources/icon.ico",
+      "signAndEditExecutable": false,
+      "executableName": "AETHER"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "shortcutName": "AETHER",
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true,
+      "installerIcon": "resources/icon.ico",
+      "uninstallerIcon": "resources/icon.ico",
+      "artifactName": "AETHER-Setup-${version}.exe",
+      "menuCategory": false
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Network"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "publish": null,
+    "executableName": "aether",
+    "afterPack": "scripts/after-pack.cjs"
+  }
+}

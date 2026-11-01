@@ -1,0 +1,33 @@
+{
+  "name": "@aether/research-module",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Wires the research packages (notebook, library, sources, annotations, PDF, writer, calculators, AI) into the AETHER shell via @aether/plugin-api.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./main": "./src/main/index.ts",
+    "./renderer": "./src/renderer/index.tsx"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aether/plugin-api": "*",
+    "@aether/research-core": "*",
+    "@aether/citations": "*",
+    "@aether/sources": "*",
+    "@aether/notebook": "*",
+    "@aether/annotations": "*",
+    "@aether/calculators": "*",
+    "@aether/pdf-viewer": "*",
+    "@aether/paper-editor": "*",
+    "@aether/ai": "*"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "license": "MIT"
+}

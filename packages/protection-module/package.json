@@ -1,0 +1,22 @@
+{
+  "name": "@aether/protection-module",
+  "version": "0.1.0",
+  "description": "Main-process module that wires privacy protection, focus and activity tracking into the AETHER shell.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@aether/web-request-hub": "0.1.0",
+    "@aether/privacy": "0.1.0",
+    "@aether/focus": "0.1.0",
+    "@aether/activity": "0.1.0",
+    "@aether/plugin-api": "0.1.0"
+  }
+}
