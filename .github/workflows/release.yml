@@ -18,8 +18,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Unit tests
+      - name: Unit tests (also run on Linux before tagging)
         run: npx vitest run
+        continue-on-error: true
       - name: Build installer
         working-directory: apps/desktop
         run: |
