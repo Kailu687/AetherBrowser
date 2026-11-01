@@ -4,6 +4,11 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to create (e.g. v0.4.0)
+        required: true
+        default: v0.4.0
 
 permissions:
   contents: write
@@ -26,11 +31,13 @@ jobs:
         run: |
           node scripts/build.mjs
           npx electron-builder --win --x64 --publish never
-          node scripts/write-manifest.mjs "${{ github.ref_name }}"
+          node scripts/write-manifest.mjs "${{ inputs.tag || github.ref_name }}"
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          name: AETHER ${{ github.ref_name }}
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          target_commitish: ${{ github.sha }}
+          name: AETHER ${{ inputs.tag || github.ref_name }}
           body_path: docs/release-notes.md
           files: |
             apps/desktop/release/AETHER-Setup-*.exe
