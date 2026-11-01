@@ -1,0 +1,33 @@
+.ce { display: flex; height: 100%; min-height: 0; }
+.ce-side { width: 220px; flex: none; border-right: 1px solid var(--line); background: var(--chrome); overflow: auto; }
+.ce-side-head { display: flex; align-items: center; padding: 8px 10px; }
+.ce-side h5 { margin: 14px 0 4px; font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.06em; }
+.ce-file { display: flex; align-items: center; padding: 5px 10px; cursor: pointer; font-size: 12.5px; }
+.ce-file:hover { background: var(--surface); }
+.ce-file.on { background: var(--surface-2); box-shadow: inset 3px 0 var(--accent); }
+.ce-pad { padding: 8px 10px; }
+.ce-pad.col { display: flex; flex-direction: column; gap: 6px; }
+.ce-tool .ok { color: var(--ok); }
+.ce-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.ce-bar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--line); background: var(--chrome); }
+.ce-bar small { max-width: 30%; }
+.ce-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ce-pill.ok { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+.ce-pill.bad { background: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+.ce-editor { flex: 1; min-height: 120px; overflow: hidden; }
+.ce-host { height: 100%; }
+.ce-host .cm-editor { height: 100%; }
+.ce-bottom { height: 34%; min-height: 120px; display: flex; flex-direction: column; border-top: 1px solid var(--line); background: var(--chrome); }
+.ce-btabs { display: flex; align-items: center; gap: 2px; padding: 3px 8px; }
+.ce-btabs button:not(.wb-link) { border: none; background: none; color: var(--muted); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.ce-btabs button.on { background: var(--surface-2); color: var(--fg); }
+.ce-out { flex: 1; overflow: auto; display: flex; flex-direction: column; min-height: 0; }
+.ce-out pre { flex: 1; margin: 0; padding: 6px 12px; font: 12.5px/1.45 'Cascadia Code', Consolas, monospace; white-space: pre-wrap; word-break: break-word; overflow: auto; user-select: text; }
+.ce-out .stderr { color: var(--danger); }
+.ce-out .info { color: var(--muted); }
+.ce-out .stdin { color: var(--accent-2); }
+.ce-stdin { padding: 4px 8px; gap: 6px; align-items: center; }
+.ce-sql { margin: 6px 12px; width: auto; }
+.ce-welcome { max-width: 640px; margin: 50px auto; padding: 0 20px; }
+.ce-langs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.ce-newmenu { max-height: 60vh; overflow: auto; }

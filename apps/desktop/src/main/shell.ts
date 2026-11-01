@@ -90,6 +90,10 @@ export class Shell {
         },
       },
       getIdleSeconds: () => powerMonitor.getSystemIdleTime(),
+      shellData: {
+        exportSyncData: (profileId) => this.exportSyncData(profileId),
+        importSyncData: (profileId, data) => this.importSyncData(profileId, data),
+      },
       emitToUi: (event, payload, windowId) => {
         for (const w of this.windows.values()) if (windowId === undefined || w.id === windowId) w.send('module-event', { event, payload });
       },
@@ -110,6 +114,10 @@ export class Shell {
 
   async loadModules(mods: AetherMainModule[]): Promise<void> {
     await this.modules.load(mods);
+  }
+
+  async loadInstallable(list: Parameters<ModuleHost['loadInstallable']>[0], gate: Parameters<ModuleHost['loadInstallable']>[1]): Promise<void> {
+    await this.modules.loadInstallable(list, gate);
   }
 
   // ---------------------------------------------------------------------------
@@ -413,6 +421,61 @@ export class Shell {
     return null;
   }
 
+  /** Bookmarks (with folder paths), theme and search engine, for Google Drive sync. */
+  exportSyncData(profileId: string): Record<string, unknown> {
+    const all = this.store.allBookmarks(profileId);
+    const byId = new Map(all.map((b) => [b.id, b]));
+    const path = (b: { parentId: number | null }): string[] => {
+      const out: string[] = [];
+      let p = b.parentId;
+      while (p !== null && byId.has(p)) {
+        const f = byId.get(p)!;
+        out.unshift(f.title);
+        p = f.parentId;
+      }
+      return out;
+    };
+    const profile = this.store.getProfile(profileId);
+    return {
+      format: 'aether-sync/1',
+      exportedAt: new Date().toISOString(),
+      bookmarks: all.filter((b) => b.url).map((b) => ({ title: b.title, url: b.url, folder: path(b) })),
+      theme: this.store.getSetting<string>('theme', DEFAULT_THEME),
+      searchEngine: profile?.searchEngine,
+    };
+  }
+
+  /** Merges synced bookmarks (adds the ones missing by URL, recreating folders). */
+  importSyncData(profileId: string, data: Record<string, unknown>): { added: number } {
+    const list = Array.isArray(data.bookmarks) ? (data.bookmarks as { title?: unknown; url?: unknown; folder?: unknown }[]) : [];
+    let added = 0;
+    const folderCache = new Map<string, number | null>();
+    const folderFor = (names: string[]): number | null => {
+      let parent: number | null = null;
+      const key: string[] = [];
+      for (const n of names.slice(0, 8)) {
+        key.push(n);
+        const k = key.join('/');
+        if (folderCache.has(k)) {
+          parent = folderCache.get(k)!;
+          continue;
+        }
+        const existing: { id: number } | undefined = this.store.listBookmarks(profileId, parent).find((b) => b.url === null && b.title === n);
+        parent = existing ? existing.id : this.store.addBookmark(profileId, { title: n, url: null, parentId: parent }).id;
+        folderCache.set(k, parent);
+      }
+      return parent;
+    };
+    for (const b of list.slice(0, 20000)) {
+      if (typeof b.url !== 'string' || !/^https?:\/\//.test(b.url) || this.store.findBookmarkByUrl(profileId, b.url)) continue;
+      const folder = Array.isArray(b.folder) ? b.folder.filter((x): x is string => typeof x === 'string').map((x) => x.slice(0, 200)) : [];
+      this.store.addBookmark(profileId, { title: typeof b.title === 'string' ? b.title : b.url, url: b.url, parentId: folderFor(folder) });
+      added++;
+    }
+    if (added) this.broadcastState();
+    return { added };
+  }
+
   private tabsApi() {
     const ctx = (win: BrowserWindowController, tab: Tab): TabContext => win.tabContext(tab);
     return {
@@ -441,6 +504,12 @@ export class Shell {
       getPageContent: async (tabId: number): Promise<PageContent | null> => {
         const f = this.findTab(tabId);
         return f ? ((await f.win.getPageContent(f.tab)) as PageContent | null) : null;
+      },
+      savePage: async (tabId: number, filePath: string): Promise<boolean> => {
+        const wc = this.findTab(tabId)?.tab.wc;
+        if (!wc || !/^https?:|^file:/.test(wc.getURL())) return false;
+        await wc.savePage(filePath, 'MHTML');
+        return true;
       },
     };
   }

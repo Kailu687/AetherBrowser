@@ -4,6 +4,8 @@ import { send } from '../api';
 import { THEMES } from '../../shared/themes';
 import type { PanelId } from './Sidebar';
 import { Popover } from './Popover';
+import { APPS } from '../workbench/apps';
+import { addonInstalled, useAddons } from '../workbench/store';
 
 interface Item {
   id: string;
@@ -14,7 +16,8 @@ interface Item {
 }
 
 /** Ctrl+K: one place to reach tabs, workspaces, profiles, panels and actions. */
-export function CommandPalette({ state, bangs, onClose, openPanel }: { state: WindowState; bangs: { trigger: string; name: string }[]; onClose: () => void; openPanel: (p: PanelId) => void }) {
+export function CommandPalette({ state, bangs, onClose, openPanel, openApp }: { state: WindowState; bangs: { trigger: string; name: string }[]; onClose: () => void; openPanel: (p: PanelId) => void; openApp?: (id: string) => void }) {
+  const addons = useAddons();
   const [q, setQ] = useState('');
   const [sel, setSel] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,11 +51,12 @@ export function CommandPalette({ state, bangs, onClose, openPanel }: { state: Wi
       ['About AETHER', '', () => send('tab:new', { url: 'aether://about' })],
     ];
     for (const [label, hint, run] of actions) out.push({ id: `a-${label}`, group: 'Actions', label, hint, run });
+    if (openApp) for (const a of APPS.filter((x) => addonInstalled(addons, x.addon))) out.push({ id: `app-${a.id}`, group: 'Workbench apps', label: `${a.icon}  ${a.title}`, hint: a.description, run: () => openApp(a.id) });
     for (const t of [{ id: 'system', name: 'Match system' }, ...Object.values(THEMES)])
       out.push({ id: `t-${t.id}`, group: 'Themes', label: `Theme: ${t.name}`, hint: state.themeId === t.id ? 'current' : '', run: () => send('theme:set', t.id) });
     for (const b of bangs) out.push({ id: `b-${b.trigger}`, group: 'Search shortcuts', label: `!${b.trigger}  ${b.name}`, hint: 'type in address bar', run: () => send('tab:new', { url: `aether://search?q=${encodeURIComponent('!' + b.trigger)}` }) });
     return out;
-  }, [state, bangs, openPanel]);
+  }, [state, bangs, openPanel, openApp, addons]);
 
   const filtered = useMemo(() => {
     const words = q.toLowerCase().split(/\s+/).filter(Boolean);

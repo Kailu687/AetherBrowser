@@ -6,6 +6,7 @@ import { call, send } from '../api';
 import type { PanelId } from './Sidebar';
 import { Icon } from './Icon';
 import { toast } from './Toasts';
+import { useWorkbench, workbench } from '../workbench/store';
 
 interface Props {
   state: WindowState;
@@ -180,6 +181,7 @@ export function Toolbar({ state, tab, omniboxRef, popover, setPopover, panel, se
       </div>
 
       <div className="actions">
+        <WorkbenchButton />
         <button className={`icon-btn ${state.split ? 'on' : ''}`} title="Split view (Ctrl+\)" onClick={() => send('split:toggle')}>
           <Icon name="split" />
         </button>
@@ -201,5 +203,15 @@ export function Toolbar({ state, tab, omniboxRef, popover, setPopover, panel, se
         </button>
       </div>
     </div>
+  );
+}
+
+/** Opens the Workbench (Writer, Code, Projects, Engineering and module apps). */
+function WorkbenchButton() {
+  const wb = useWorkbench();
+  return (
+    <button className={`icon-btn wb-launch ${wb.visible ? 'on' : ''}`} title="Workbench: Writer, Code, Projects and modules (Ctrl+Shift+Space)" onClick={() => workbench.toggle()}>
+      <Icon name="apps" />
+    </button>
   );
 }

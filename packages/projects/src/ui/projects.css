@@ -1,0 +1,31 @@
+.pj-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.pj-head { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.pj-name { font-size: 20px; font-weight: 700; background: transparent; border: 1px solid transparent; color: var(--fg); border-radius: 6px; padding: 2px 6px; min-width: 200px; }
+.pj-name:focus { border-color: var(--line); outline: none; }
+.pj-desc { width: 100%; min-height: 56px; resize: vertical; }
+.pj-tabs { display: flex; gap: 4px; margin: 14px 0 10px; border-bottom: 1px solid var(--line); }
+.pj-tabs button { border: none; background: none; color: var(--muted); padding: 8px 12px; cursor: pointer; border-bottom: 2px solid transparent; }
+.pj-tabs button.on { color: var(--fg); border-bottom-color: var(--accent); }
+.pj-h5 { margin: 16px 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.pj-add, .pj-reqform { gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.pj-item { gap: 8px; }
+.pj-status { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 10px; }
+.pj-status.mini { font-size: 10px; padding: 0 6px; }
+.pj-status.ok { background: color-mix(in srgb, var(--ok) 25%, transparent); color: var(--ok); }
+.pj-status.bad { background: color-mix(in srgb, var(--danger) 25%, transparent); color: var(--danger); }
+.pj-status.unk { background: var(--surface-2); color: var(--muted); }
+.pj-ev { margin-bottom: 3px; }
+.pj-evform { gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.pj-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.pj-col { background: var(--chrome); border-radius: 10px; padding: 4px 8px 10px; min-height: 120px; }
+.pj-task { margin-bottom: 6px; display: flex; flex-direction: column; gap: 6px; }
+.pj-done { text-decoration: line-through; color: var(--muted); }
+.pj-dec { margin-bottom: 8px; }
+.pj-dec p { margin: 6px 0 0; }
+.pj-decform { display: flex; flex-direction: column; gap: 6px; max-width: 640px; }
+.pj-chip { display: inline-flex; gap: 4px; margin: 2px 8px 2px 0; }
+.pj-empty { max-width: 560px; margin: 60px auto; text-align: center; }
+.pj-ev.stale { opacity: 0.75; }
+.pj-stale { color: #d9922e; margin-left: 4px; }
+.pj-evlevel { font-size: 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); padding: 0 2px; }
+.pj-evlevel.proving { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); }

@@ -31,7 +31,6 @@ export const researchRendererModule: AetherRendererModule = {
   panels: [
     { id: "notebook", title: "Notebook", icon: "✎", component: NotesPanel, width: 420 },
     { id: "library", title: "Library", icon: "\u{1F4DA}", component: lazyPanel(async () => (await import("./LibraryPanel.js")).LibraryPanel), width: 400 },
-    { id: "writer", title: "Writer", icon: "\u{1F4DD}", component: lazyPanel(async () => (await import("./WriterPanel.js")).WriterPanel), width: 760 },
     { id: "calculator", title: "Calculator", icon: "∑", component: lazyPanel(async () => (await import("@aether/calculators/ui")).CalculatorPanel as never), width: 360 },
     { id: "assistant", title: "Assistant", icon: "✦", component: lazyPanel(async () => (await import("./AssistantPanel.js")).AssistantPanel), width: 380 },
   ],

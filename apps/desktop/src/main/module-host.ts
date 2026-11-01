@@ -1,4 +1,4 @@
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import type {
   AetherMainModule,
@@ -18,8 +18,11 @@ import type {
   ShellEvents,
   TabsApi,
 } from '@aether/plugin-api';
-import { net, Notification, safeStorage } from 'electron';
+import { BrowserWindow, dialog, net, Notification, safeStorage, shell } from 'electron';
+import { pathToFileURL } from 'node:url';
 import type { AetherStore } from '@aether/storage';
+import type { ModuleManifest } from '@aether/plugin-api';
+import { scopedModuleHost } from './module-sandbox';
 
 type Listener<K extends ShellEventName> = (p: ShellEvents[K]) => void;
 type ModuleHandler = Parameters<ModuleIpc['handle']>[1];
@@ -33,7 +36,27 @@ export interface ModuleHostDeps {
   profiles: ProfilesApi;
   getIdleSeconds(): number;
   emitToUi(event: string, payload: unknown, windowId?: number): void;
+  shellData?: MainHost['shellData'];
 }
+
+/** Renders trusted HTML to PDF in a hidden, script-free, offline window. */
+async function htmlToPdf(dir: string, html: string, opts: { landscape?: boolean; pageSize?: 'A4' | 'Letter' } = {}): Promise<Uint8Array> {
+  const file = join(dir, `print-${Date.now()}-${Math.random().toString(36).slice(2)}.html`);
+  writeFileSync(file, html, 'utf8');
+  const win = new BrowserWindow({ show: false, webPreferences: { javascript: false, sandbox: true, contextIsolation: true, nodeIntegration: false, partition: 'aether-print' } });
+  try {
+    // Block every network request: only the local file and inline data may load.
+    win.webContents.session.webRequest.onBeforeRequest((d, cb) => cb({ cancel: !/^(file|data|blob):/.test(d.url) }));
+    await win.loadURL(pathToFileURL(file).toString());
+    const pdf = await win.webContents.printToPDF({ pageSize: opts.pageSize ?? 'A4', landscape: !!opts.landscape, printBackground: true, margins: { marginType: 'none' } });
+    return new Uint8Array(pdf);
+  } finally {
+    win.destroy();
+    rmSync(file, { force: true });
+  }
+}
+
+const parentWindow = () => BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0];
 
 /**
  * Runs feature modules and isolates their failures: a throwing listener,
@@ -55,6 +78,8 @@ export class ModuleHost {
   private frameHooks: { moduleId: string; fn: FrameStartHandler }[] = [];
   private handlers = new Map<string, ModuleHandler>();
   private modules: AetherMainModule[] = [];
+  private installable = new Map<string, ModuleManifest>();
+  private moduleGate: ((profileId: string, moduleId: string) => boolean) | null = null;
 
   constructor(private deps: ModuleHostDeps) {}
 
@@ -112,6 +137,7 @@ export class ModuleHost {
   }
 
   async invoke(moduleId: string, method: string, payload: unknown, ctx: { windowId: number; profileId: string; isPrivate: boolean }): Promise<unknown> {
+    if (this.installable.has(moduleId) && !this.moduleGate?.(ctx.profileId, moduleId)) throw new Error(`module-not-installed:${moduleId}`);
     const handler = this.handlers.get(`${moduleId}:${method}`);
     if (!handler) throw new Error(`No handler for ${moduleId}.${method}`);
     return handler(payload, ctx);
@@ -129,6 +155,30 @@ export class ModuleHost {
         console.info(`[modules] activated ${mod.id}`);
       } catch (err) {
         console.error(`[modules] failed to activate ${mod.id}`, err);
+      }
+    }
+  }
+
+  /**
+   * Installable Modules get a scoped host (own database, network allow-list, process broker,
+   * no session/frame/navigation hooks) and their IPC only answers profiles
+   * that installed them.
+   */
+  async loadInstallable(list: { manifest: ModuleManifest; main: AetherMainModule }[], gate: (profileId: string, moduleId: string) => boolean): Promise<void> {
+    this.moduleGate = gate;
+    for (const { manifest, main } of list) {
+      if (main.id !== manifest.id || this.modules.some((m) => m.id === main.id)) {
+        console.error(`[modules] module ${manifest.id}: module id must equal manifest id and be unique`);
+        continue;
+      }
+      try {
+        const host = await scopedModuleHost(this.hostFor(manifest.id), manifest);
+        await main.activate(host);
+        this.modules.push(main);
+        this.installable.set(manifest.id, manifest);
+        console.info(`[modules] activated installable module ${manifest.id}`);
+      } catch (err) {
+        console.error(`[modules] failed to activate installable module ${manifest.id}`, err);
       }
     }
   }
@@ -228,6 +278,26 @@ export class ModuleHost {
           if (Notification.isSupported()) new Notification({ title, body, silent }).show();
         },
       },
+      dialogs: {
+        openFile: async (o = {}) => {
+          const r = await dialog.showOpenDialog(parentWindow(), { title: o.title, filters: o.filters, properties: o.multi ? ['openFile', 'multiSelections'] : ['openFile'] });
+          return r.canceled ? [] : r.filePaths;
+        },
+        openFolder: async (o = {}) => {
+          const r = await dialog.showOpenDialog(parentWindow(), { title: o.title, properties: ['openDirectory', 'createDirectory'] });
+          return r.canceled ? null : (r.filePaths[0] ?? null);
+        },
+        saveFile: async (o = {}) => {
+          const r = await dialog.showSaveDialog(parentWindow(), { title: o.title, defaultPath: o.defaultPath, filters: o.filters });
+          return r.canceled ? null : (r.filePath ?? null);
+        },
+      },
+      openExternal: async (url) => {
+        if (!/^https?:\/\//i.test(url)) throw new Error('Only http(s) links can be opened externally');
+        await shell.openExternal(url);
+      },
+      printToPdf: (html, opts) => htmlToPdf(dataDir, html, opts),
+      shellData: this.deps.shellData,
       log: {
         info: (m, ...a) => console.info(prefix(m), ...a),
         warn: (m, ...a) => console.warn(prefix(m), ...a),

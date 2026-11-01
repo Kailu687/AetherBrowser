@@ -3,6 +3,7 @@ import type { PanelApi, SidebarPanelDefinition } from '@aether/plugin-api';
 import type { WindowState } from '../../shared/types';
 import { bridge, call, send } from '../api';
 import { RENDERER_MODULES } from '../modules';
+import { MODULE_UIS } from '../addon-modules';
 import { BookmarksPanel } from '../panels/BookmarksPanel';
 import { PasswordsPanel } from '../panels/PasswordsPanel';
 import { DownloadsPanel } from '../panels/DownloadsPanel';
@@ -11,6 +12,7 @@ import { NotesPanel } from '../panels/NotesPanel';
 import { SettingsPanel } from '../panels/SettingsPanel';
 import { ErrorBoundary } from './ErrorBoundary';
 import { Icon, useHasIcon } from './Icon';
+import { addonInstalled, useAddons } from '../workbench/store';
 
 export type PanelId = string;
 
@@ -22,9 +24,15 @@ const CORE: { id: string; title: string; icon: string }[] = [
   { id: 'passwords', title: 'Passwords', icon: 'key' },
 ];
 
-const modulePanels: (SidebarPanelDefinition & { moduleId: string })[] = RENDERER_MODULES.flatMap((m) => (m.panels ?? []).map((p) => ({ ...p, moduleId: m.id })));
+const allModulePanels: (SidebarPanelDefinition & { moduleId: string })[] = [
+  ...RENDERER_MODULES.flatMap((m) => (m.panels ?? []).map((p) => ({ ...p, moduleId: m.id }))),
+  // Installable Modules' panels: always gated on that Module being active.
+  ...MODULE_UIS.flatMap((m) => (m.panels ?? []).map((p) => ({ ...p, moduleId: m.id, addon: p.addon ?? m.id }))),
+];
 
 export function Sidebar({ state, panel, setPanel }: { state: WindowState; panel: PanelId; setPanel: (p: PanelId | null) => void }) {
+  const addons = useAddons();
+  const modulePanels = allModulePanels.filter((p) => addonInstalled(addons, p.addon));
   const active = state.tabs.find((t) => t.id === state.activeTabId);
   const mod = modulePanels.find((p) => `${p.moduleId}:${p.id}` === panel);
   const width = mod?.width ?? 340;

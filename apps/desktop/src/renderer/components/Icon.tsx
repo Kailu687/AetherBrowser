@@ -28,6 +28,7 @@ const paths: Record<string, string> = {
   pin: 'M6 2.5h4l-.5 4 2 2v1h-7v-1l2-2zM8 9.5v4',
   trash: 'M3 4.5h10M6 4.5v-2h4v2M4.5 4.5l.5 9h6l.5-9',
   folder: 'M2.5 4.5h4l1 1.5h6v7h-11z',
+  apps: 'M2.5 2.5h4.5v4.5h-4.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5h-4.5zM9 9h4.5v4.5H9z',
   external: 'M9 2.5h4.5V7M13.5 2.5 7.5 8.5M11.5 9.5v4h-9v-9h4',
   chevron: 'M4 6l4 4 4-4',
   check: 'M3 8.5l3 3 7-7',

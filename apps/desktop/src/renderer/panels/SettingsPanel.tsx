@@ -3,6 +3,8 @@ import type { WindowState } from '../../shared/types';
 import { call, send } from '../api';
 import { Icon } from '../components/Icon';
 import { THEMES, resolveTheme } from '../../shared/themes';
+import { GoogleSection } from './GoogleSection';
+import { workbench } from '../workbench/store';
 
 interface Settings {
   sleepAfterMinutes: number;
@@ -23,6 +25,15 @@ export function SettingsPanel({ state }: { state: WindowState }) {
       <label className="check">
         <input type="checkbox" checked={state.bookmarksBar} onChange={() => send('bookmarks:bar-toggle')} /> Show bookmarks bar (Ctrl+Shift+B)
       </label>
+
+      <h4>Google account</h4>
+      <GoogleSection profileId={state.profile.id} />
+
+      <h4>Modules</h4>
+      <p className="small muted">Install, turn off, review permissions or remove specialist modules, or restart in safe mode.</p>
+      <button className="btn small" onClick={() => workbench.open('store')}>
+        Open Module Store
+      </button>
 
       {!state.isPrivate && <ExtensionsSection />}
 
@@ -56,7 +67,7 @@ export function SettingsPanel({ state }: { state: WindowState }) {
 
       <h4>Privacy</h4>
       <p className="small muted">
-        Each profile has its own cookies, sign-ins, cache and site storage on this device. AETHER sends no telemetry and needs no account. Websites, your network and your search engine can still see what you do on them.
+        Each profile has its own cookies, sign-ins, cache and site storage on this device. AETHER sends no telemetry and needs no account (Google sign-in is optional). Websites, your network and your search engine can still see what you do on them.
       </p>
       <button className="btn small" onClick={() => send('tab:new', { url: 'aether://about' })}>
         About AETHER

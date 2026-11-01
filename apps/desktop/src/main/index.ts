@@ -5,7 +5,8 @@ import { app, Menu, protocol, safeStorage, session, shell as electronShell, type
 import { AetherStore } from '@aether/storage';
 import { registerIpc } from './ipc';
 import { LocalUpdater } from './updater';
-import { MAIN_MODULES } from './modules';
+import { MAIN_MODULES, addons, isSafeMode } from './modules';
+import { INSTALLABLE } from './addon-modules';
 import { Shell } from './shell';
 
 // aether:// is a standard, secure scheme for internal pages.
@@ -102,6 +103,8 @@ if (!app.requestSingleInstanceLock()) {
     shell = new Shell({ store, uiUrl, isDev, userDataDir: userData, iconPath: join(__dirname, 'icon.png') });
     registerIpc(shell);
     await shell.loadModules(MAIN_MODULES);
+    // Safe mode: installable Modules' main code is not even activated.
+    if (!isSafeMode()) await shell.loadInstallable(INSTALLABLE, (profileId, moduleId) => addons.broker.active(profileId, moduleId));
     shell.restoreOrOpen();
     const updater = new LocalUpdater(() => LocalUpdater.defaultDir(), () => shell?.lastFocused?.win ?? null);
     updater.start();

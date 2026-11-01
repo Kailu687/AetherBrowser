@@ -1,0 +1,14 @@
+{
+  "name": "@aether/projects",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Project Intelligence: one place for a project's tabs, sources, documents, code, lab artefacts, tasks, decisions, requirements and validation records.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": { ".": "./src/index.ts", "./ui": "./src/ui/index.ts" },
+  "scripts": { "test": "vitest run" },
+  "dependencies": { "@aether/plugin-api": "*" },
+  "peerDependencies": { "react": ">=18" },
+  "license": "MPL-2.0"
+}

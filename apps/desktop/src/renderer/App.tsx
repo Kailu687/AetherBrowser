@@ -15,6 +15,8 @@ import { TabStrip } from './components/TabStrip';
 import { Toasts, toast } from './components/Toasts';
 import { Toolbar } from './components/Toolbar';
 import { WorkspaceMenu } from './components/WorkspaceMenu';
+import { Workbench } from './workbench/Workbench';
+import { useWorkbench, workbench } from './workbench/store';
 
 export type Popover = null | 'profile' | 'workspace' | 'palette' | 'omnibox';
 
@@ -42,6 +44,7 @@ export function App() {
   const [permissions, setPermissions] = useState<PermissionPrompt[]>([]);
   const [bangs, setBangs] = useState<{ trigger: string; name: string; category: string }[]>([]);
   const omniboxRef = useRef<HTMLInputElement>(null);
+  const wb = useWorkbench();
   const popoverRef = useRef<Popover>(null);
 
   const setPanel = useCallback((p: PanelId | null) => {
@@ -131,6 +134,11 @@ export function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'Space') {
+        e.preventDefault();
+        workbench.toggle();
+        return;
+      }
       if (e.key === 'Escape') {
         if (popoverRef.current) setPopover(null);
         else if (findOpen) setFindOpen(false);
@@ -183,13 +191,14 @@ export function App() {
         <PermissionBar key={p.requestId} prompt={p} isPrivate={state.isPrivate} onRespond={(a, r) => respondPermission(p, a, r)} />
       ))}
       <Toasts />
-      <div className="body">
+      <div className={`body ${wb.visible ? `wb-${wb.mode}` : ''}`}>
         <ContentArea state={state} snapshots={snapshots} overlay={popover !== null} />
+        {wb.visible && <Workbench state={state} />}
         {panel && <Sidebar state={state} panel={panel} setPanel={setPanel} />}
       </div>
       {popover === 'profile' && <ProfileMenu state={state} onClose={() => setPopover(null)} />}
       {popover === 'workspace' && <WorkspaceMenu state={state} onClose={() => setPopover(null)} />}
-      {popover === 'palette' && <CommandPalette state={state} bangs={bangs} onClose={() => setPopover(null)} openPanel={(p) => setPanel(p)} />}
+      {popover === 'palette' && <CommandPalette state={state} bangs={bangs} onClose={() => setPopover(null)} openPanel={(p) => setPanel(p)} openApp={(id) => workbench.open(id)} />}
     </div>
   );
 }
