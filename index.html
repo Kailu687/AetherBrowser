@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AETHER Browser</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="AETHER is a private, local-first desktop browser for engineers, students and researchers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single column "flight path" — hero with live address bar, then layer stack (Core → Studio → Modules), feature explorer, security ledger, version timeline, download bay. */
+:root {
+  /* dark-first: AETHER's own default theme (night navy, violet → teal) */
+  --bg: #0a0c16;
+  --bg-2: #10132200;
+  --surface: #121628;
+  --surface-2: #181d33;
+  --line: #262c48;
+  --fg: #e6e8f4;
+  --muted: #9198b8;
+  --violet: #8b8cf8;
+  --teal: #2fd3bd;
+  --amber: #f2b441;
+  --good: #3fcf8e;
+  --warn: #f2b441;
+  --plan: #8b8cf8;
+  --bad: #f07178;
+  --glow: rgba(139,140,248,.18);
+  --shadow: 0 24px 60px -20px rgba(0,0,0,.6);
+  --f-display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Hanken Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f3f4fa; --surface: #ffffff; --surface-2: #eceef8; --line: #d9dcec;
+    --fg: #151831; --muted: #5a6084; --violet: #5354d6; --teal: #0f9b88; --amber: #a86a00;
+    --good: #138a55; --warn: #a86a00; --plan: #5354d6; --bad: #c2353f;
+    --glow: rgba(83,84,214,.12); --shadow: 0 24px 60px -24px rgba(30,34,80,.25);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f3f4fa; --surface: #ffffff; --surface-2: #eceef8; --line: #d9dcec;
+  --fg: #151831; --muted: #5a6084; --violet: #5354d6; --teal: #0f9b88; --amber: #a86a00;
+  --good: #138a55; --warn: #a86a00; --plan: #5354d6; --bad: #c2353f;
+  --glow: rgba(83,84,214,.12); --shadow: 0 24px 60px -24px rgba(30,34,80,.25);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.6 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: var(--teal); }
+a:focus-visible, button:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h2 { font: 700 clamp(1.6rem, 3.4vw, 2.4rem)/1.15 var(--f-display); letter-spacing: -.01em; }
+h3 { font: 600 1.15rem/1.3 var(--f-body); }
+p { margin: 0; }
+.eyebrow { font: 500 .75rem/1 var(--f-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--teal); }
+.lede { color: var(--muted); font-size: 1.08rem; max-width: 62ch; }
+.mono { font-family: var(--f-mono); }
+section { padding-block: clamp(56px, 9vw, 104px); }
+.sec-head { display: grid; gap: 14px; margin-bottom: 40px; }
+
+/* ---------- top bar ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 24px; padding-block: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--fg); }
+.brand b { font: 700 1rem/1 var(--f-display); letter-spacing: .22em; }
+.mark { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg, var(--violet), var(--teal)); display: grid; place-items: center; }
+.mark svg { width: 15px; height: 15px; }
+.nav { display: flex; gap: 20px; margin-left: auto; }
+.nav a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: .95rem; }
+.nav a:hover { color: var(--fg); }
+.btn { display: inline-flex; align-items: center; gap: 10px; border: 1px solid transparent; border-radius: 10px; padding: 11px 18px; font: 600 .95rem/1 var(--f-body); cursor: pointer; text-decoration: none; transition: transform .15s ease, background .15s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--fg); color: var(--bg); }
+.btn-ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn-sm { padding: 8px 14px; font-size: .88rem; }
+@media (max-width: 760px) { .nav { display: none; } .top .btn { margin-left: auto; } }
+
+/* ---------- hero ---------- */
+.hero { padding-block: clamp(48px, 8vw, 96px) 40px; position: relative; overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 520px; background: radial-gradient(closest-side, var(--glow), transparent 70%); pointer-events: none; }
+.hero .wrap { position: relative; display: grid; gap: 28px; }
+.hero h1 { font: 700 clamp(2.2rem, 6.4vw, 4.6rem)/1.02 var(--f-display); letter-spacing: -.02em; max-width: 16ch; }
+.hero h1 em { font-style: normal; background: linear-gradient(90deg, var(--violet), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.hero-meta { color: var(--muted); font: 400 .85rem/1.5 var(--f-mono); }
+.hero-meta span + span::before { content: " · "; }
+
+/* live address bar */
+.omni { margin-top: 12px; border: 1px solid var(--line); background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; max-width: 820px; }
+.omni-bar { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.omni-bar .lock { color: var(--good); flex: none; }
+.omni-input { font: 500 clamp(.92rem, 2.2vw, 1.08rem)/1.3 var(--f-mono); white-space: nowrap; overflow: hidden; min-width: 0; flex: 1; }
+.omni-input .caret { display: inline-block; width: 2px; height: 1.1em; vertical-align: -3px; background: var(--teal); margin-left: 1px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.omni-out { display: flex; align-items: center; gap: 14px; padding: 14px 16px; min-height: 58px; flex-wrap: wrap; }
+.omni-tag { font: 500 .7rem/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); padding: 5px 8px; border-radius: 6px; }
+.omni-result { font: 600 1.05rem/1.3 var(--f-mono); color: var(--teal); }
+.omni-note { color: var(--muted); font-size: .88rem; margin-left: auto; }
+.omni-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px; }
+.chip { font: 500 .8rem/1 var(--f-mono); padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: transparent; cursor: pointer; }
+.chip[aria-pressed="true"] { color: var(--fg); border-color: var(--violet); background: var(--surface-2); }
+
+.hero-shot { margin-top: 28px; border-radius: 14px; border: 1px solid var(--line); overflow: hidden; box-shadow: var(--shadow); }
+.hero-shot img { display: block; width: 100%; height: auto; }
+
+/* ---------- layers ---------- */
+.stack { display: grid; gap: 14px; }
+.layer { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: clamp(20px, 3vw, 32px); display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 28px; }
+@media (max-width: 820px) { .layer { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
+.layer-id { display: grid; gap: 10px; align-content: start; }
+.layer-id .lv { font: 500 .72rem/1 var(--f-mono); letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+.layer-id h3 { font: 700 1.5rem/1.15 var(--f-display); }
+.layer-id p { color: var(--muted); font-size: .95rem; }
+.joint { display: flex; justify-content: center; color: var(--muted); font: 500 .75rem/1 var(--f-mono); letter-spacing: .14em; gap: 10px; align-items: center; }
+.joint::before, .joint::after { content: ""; height: 1px; width: 60px; background: var(--line); }
+.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px 22px; align-content: start; }
+.item { display: grid; gap: 4px; align-content: start; justify-items: start; padding-block: 10px; border-top: 1px solid var(--line); min-width: 0; }
+.item b { font-weight: 600; }
+.item span { color: var(--muted); font-size: .9rem; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 500 .68rem/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; border: 1px solid currentColor; width: fit-content; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.s-ship { color: var(--good); }
+.s-prev { color: var(--warn); }
+.s-plan { color: var(--plan); }
+.s-no { color: var(--bad); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: .88rem; }
+.legend span { display: inline-flex; gap: 8px; align-items: center; }
+
+.labs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.lab { border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 8px; align-content: start; background: var(--surface-2); min-width: 0; }
+.lab-top { display: flex; align-items: center; gap: 10px; }
+.lab-ico { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); display: grid; place-items: center; color: var(--violet); flex: none; background: var(--surface); }
+.lab-ico svg { width: 18px; height: 18px; }
+.lab h4 { margin: 0; font-size: 1rem; }
+.lab p { color: var(--muted); font-size: .88rem; }
+.lab .limit { font-size: .8rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.lab .limit b { color: var(--fg); font-weight: 600; }
+
+/* ---------- explorer ---------- */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 22px; }
+.tab { font: 600 .92rem/1 var(--f-body); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: clamp(20px, 4vw, 48px); align-items: start; }
+@media (max-width: 900px) { .panel { grid-template-columns: minmax(0, 1fr); } }
+.panel-copy { display: grid; gap: 18px; }
+.flist { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.flist li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.flist li b { font-weight: 600; }
+.flist li small { grid-column: 1 / -1; color: var(--muted); font-size: .9rem; }
+.flist .k { font: 500 .78rem/1.4 var(--f-mono); color: var(--muted); }
+.shots { display: grid; gap: 12px; }
+.shot { margin: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot figcaption { padding: 10px 14px; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); }
+.shot-switch { display: flex; gap: 8px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--muted); background: transparent; padding: 0; cursor: pointer; }
+.dot[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); }
+
+/* ---------- security ---------- */
+.ledger { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 900px) { .ledger { grid-template-columns: minmax(0, 1fr); } }
+.ledger-col { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: clamp(18px, 3vw, 28px); display: grid; gap: 4px; align-content: start; }
+.ledger-col h3 { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 12px 0; border-top: 1px solid var(--line); }
+.row b { font-weight: 600; }
+.row span { color: var(--muted); font-size: .9rem; }
+.callout { margin-top: 16px; border: 1px dashed var(--line); border-radius: 14px; padding: 16px 18px; color: var(--muted); font-size: .92rem; }
+.callout b { color: var(--fg); }
+
+/* ---------- versions ---------- */
+.versions { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 860px) { .versions { grid-template-columns: minmax(0, 1fr); } }
+.vlist { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+.vbtn { position: relative; text-align: left; background: transparent; border: 0; color: var(--fg); padding: 12px 12px 12px 22px; cursor: pointer; display: grid; gap: 3px; border-radius: 0 10px 10px 0; }
+.vbtn::before { content: ""; position: absolute; left: -7px; top: 18px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--line); }
+.vbtn[aria-selected="true"] { background: var(--surface); }
+.vbtn[aria-selected="true"]::before { border-color: var(--teal); background: var(--teal); }
+.vbtn .vn { font: 600 1.05rem/1 var(--f-mono); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.vbtn .vd { color: var(--muted); font-size: .85rem; }
+.vcard { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: clamp(18px, 3vw, 30px); display: grid; gap: 18px; min-width: 0; }
+.vcard-head { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: baseline; }
+.vcard-head h3 { font: 700 1.6rem/1 var(--f-mono); }
+.vcard-head .vd { color: var(--muted); }
+.vsum { color: var(--muted); max-width: 70ch; }
+.grp { display: grid; gap: 6px; }
+.grp h4 { margin: 0; font: 500 .72rem/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.grp ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.grp li::marker { color: var(--violet); }
+.grp.known li::marker { color: var(--warn); }
+code { font-family: var(--f-mono); font-size: .88em; background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; overflow-wrap: anywhere; }
+.compare { margin-top: 28px; border: 1px solid var(--line); border-radius: 18px; padding: clamp(18px, 3vw, 28px); display: grid; gap: 16px; background: var(--surface); }
+.compare-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.compare-bar label { color: var(--muted); font-size: .9rem; }
+select { font: 500 .95rem/1 var(--f-mono); padding: 9px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); }
+.diff { display: grid; gap: 14px; }
+.diff .grp li span.v { font: 500 .72rem/1 var(--f-mono); color: var(--muted); margin-right: 8px; }
+
+/* ---------- download ---------- */
+.bay { border: 1px solid var(--line); border-radius: 22px; background: linear-gradient(180deg, var(--surface), var(--surface-2)); padding: clamp(22px, 4vw, 44px); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); }
+@media (max-width: 900px) { .bay { grid-template-columns: minmax(0, 1fr); } }
+.bay-main { display: grid; gap: 18px; align-content: start; }
+.bay-main h2 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); }
+.spec { display: grid; gap: 0; }
+.spec div { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .93rem; }
+.spec dt, .spec dd { margin: 0; }
+.spec dt { color: var(--muted); }
+.hash { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.hash code { font-size: .78rem; }
+.copy { font: 500 .78rem/1 var(--f-body); border: 1px solid var(--line); background: transparent; color: var(--fg); padding: 6px 10px; border-radius: 7px; cursor: pointer; }
+.pending { display: none; border: 1px solid var(--warn); color: var(--fg); border-radius: 12px; padding: 14px 16px; font-size: .92rem; background: color-mix(in srgb, var(--warn) 10%, transparent); }
+.pending.show { display: block; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 10px; color: var(--muted); }
+.steps b { color: var(--fg); }
+.platforms { display: flex; flex-wrap: wrap; gap: 8px; }
+.plat { font: 500 .8rem/1 var(--f-mono); padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); color: var(--muted); }
+.plat.on { color: var(--fg); border-color: var(--teal); }
+
+footer { padding-block: 40px 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="AETHER home">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#0a0c16" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2 3 14M8 2l5 12M5.2 9h5.6"/></svg></span>
+      <b>AETHER</b>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#layers">Platform</a>
+      <a href="#explore">Features</a>
+      <a href="#security">Security</a>
+      <a href="#versions">Versions</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="#download">Download</a>
+  </div>
+</header>
+
+<main id="top">
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Desktop browser · Windows · v<span data-latest>0.3.2</span></span>
+    <h1>Browse deeply. <em>Build</em> without distraction.</h1>
+    <p class="lede">AETHER is a private, local-first browser for engineers, students and researchers. Separate profiles that never share cookies, workspaces that remember where you were, strong ad blocking on by default, and engineering tools right in the address bar. No account, no cloud and no telemetry.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#download" data-dl>
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 2v8m0 0 3.2-3.2M8 10 4.8 6.8M2.5 13.5h11"/></svg>
+        Download for Windows
+      </a>
+      <a class="btn btn-ghost" href="#explore">Explore the features</a>
+    </div>
+    <p class="hero-meta"><span>Windows 10/11 · 64-bit</span><span>96 MB</span><span>No admin needed</span><span>Free, MPL-2.0</span></p>
+
+    <div class="omni" aria-label="Address bar demo">
+      <div class="omni-bar">
+        <svg class="lock" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.6"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+        <div class="omni-input" id="omniInput" aria-live="off"><span id="omniText">= 3.3V / 470ohm in mA</span><span class="caret" aria-hidden="true"></span></div>
+      </div>
+      <div class="omni-out" aria-live="polite">
+        <span class="omni-tag" id="omniTag">Calculator</span>
+        <span class="omni-result" id="omniResult">7.02 mA</span>
+        <span class="omni-note" id="omniNote">Enter copies the result</span>
+      </div>
+      <div class="omni-chips" id="omniChips" role="group" aria-label="Try an example"></div>
+    </div>
+
+    <figure class="hero-shot shot" style="margin-top:28px">
+      <img src="img/theme-aether.png" alt="AETHER's new tab page in the default theme, with workspace switcher, tabs, address bar and bang shortcut chips" width="1280" height="820">
+    </figure>
+  </div>
+</section>
+
+<!-- ================= LAYERS ================= -->
+<section id="layers">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The platform</span>
+      <h2>One browser, three layers</h2>
+      <p class="lede">The core stays light enough for everyday browsing. Studio adds the professional tools that ship with AETHER. Modules are specialist toolkits you install when you need them, each with its own workspace, tools and project files, like unlocking a new area in a game. No module is just a list of links or an AI chat window.</p>
+      <div class="legend">
+        <span><i class="pill s-ship">Available</i> in today's download</span>
+        <span><i class="pill s-prev">Preview</i> works, still rough</span>
+        <span><i class="pill s-plan">Planned</i> being designed or built</span>
+      </div>
+    </div>
+
+    <div class="stack">
+      <article class="layer">
+        <div class="layer-id">
+          <span class="lv">Layer 1</span>
+          <h3>AETHER Core</h3>
+          <p>Everything essential, offline and fast. This is what you install today.</p>
+        </div>
+        <div class="items" id="coreItems"></div>
+      </article>
+
+      <div class="joint" aria-hidden="true">shared storage · permissions · citations</div>
+
+      <article class="layer">
+        <div class="layer-id">
+          <span class="lv">Layer 2</span>
+          <h3>AETHER Studio</h3>
+          <p>Professional tools that ship with the app. Writing, editing and exporting work without AI or internet.</p>
+        </div>
+        <div class="items" id="studioItems"></div>
+      </article>
+
+      <div class="joint" aria-hidden="true">manifest · permissions · integrity check</div>
+
+      <article class="layer">
+        <div class="layer-id">
+          <span class="lv">Layer 3</span>
+          <h3>AETHER Modules</h3>
+          <p>Installable toolkits for each discipline. Research &amp; Writing is in preview in today's download; the rest are being built. Each card says what the module will do and where its limits are.</p>
+        </div>
+        <div class="labs" id="labs"></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPLORER ================= -->
+<section id="explore" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Feature explorer</span>
+      <h2>What's in version <span data-latest>0.3.2</span></h2>
+      <p class="lede">Every item here is in the current installer. Screenshots are from the real app.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Feature areas" id="exTabs"></div>
+    <div class="panel" id="exPanel" role="tabpanel">
+      <div class="panel-copy">
+        <h3 id="exTitle"></h3>
+        <p class="lede" id="exLede"></p>
+        <ul class="flist" id="exList"></ul>
+      </div>
+      <div class="shots">
+        <figure class="shot"><img id="exImg" src="img/workspaces-menu.png" alt="" width="1280" height="800"><figcaption id="exCap"></figcaption></figure>
+        <div class="shot-switch" id="exDots" role="group" aria-label="Screenshots"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECURITY ================= -->
+<section id="security" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Security</span>
+      <h2>What protects you, and what doesn't yet</h2>
+      <p class="lede">A browser handles your sign-ins and passwords, so we list our gaps as plainly as our protections. Both lists come from AETHER's threat model.</p>
+    </div>
+    <div class="ledger">
+      <div class="ledger-col">
+        <h3><span class="pill s-ship">In place</span></h3>
+        <div id="secOn"></div>
+      </div>
+      <div class="ledger-col">
+        <h3><span class="pill s-no">Not yet</span></h3>
+        <div id="secOff"></div>
+      </div>
+    </div>
+    <p class="callout"><b>Ad blocking reduces tracking. It does not make you anonymous</b> to websites, your network or your university. AETHER doesn't promise otherwise.</p>
+  </div>
+</section>
+
+<!-- ================= VERSIONS ================= -->
+<section id="versions" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Versions</span>
+      <h2>Release history</h2>
+      <p class="lede">Pick a version to read its notes, or compare two versions to see everything that changed between them.</p>
+    </div>
+    <div class="versions">
+      <div class="vlist" role="tablist" aria-label="Versions" id="vList"></div>
+      <article class="vcard" id="vCard" role="tabpanel"></article>
+    </div>
+
+    <div class="compare">
+      <div class="compare-bar">
+        <h3 style="margin-right:auto">Compare versions</h3>
+        <label for="cmpFrom">From</label>
+        <select id="cmpFrom"></select>
+        <label for="cmpTo">to</label>
+        <select id="cmpTo"></select>
+      </div>
+      <div class="diff" id="cmpOut"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DOWNLOAD ================= -->
+<section id="download" style="padding-top:0">
+  <div class="wrap">
+    <div class="bay">
+      <div class="bay-main">
+        <span class="eyebrow">Download</span>
+        <h2>AETHER <span data-latest>0.3.2</span> for Windows</h2>
+        <div class="platforms">
+          <span class="plat on">Windows 10/11 · x64</span>
+          <span class="plat">macOS · not yet</span>
+          <span class="plat">Linux · not yet</span>
+        </div>
+        <div>
+          <a class="btn btn-primary" href="#download" data-dl id="dlBtn">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 2v8m0 0 3.2-3.2M8 10 4.8 6.8M2.5 13.5h11"/></svg>
+            <span id="dlLabel">Download AETHER-Setup-0.3.2.exe</span>
+          </a>
+        </div>
+        <p class="pending" id="dlPending" role="status">The public download link is being set up. Until then, the installer is available from the project's <code>releases</code> folder.</p>
+        <dl class="spec">
+          <div><dt>File</dt><dd class="mono" id="dlFile">AETHER-Setup-0.3.2.exe</dd></div>
+          <div><dt>Size</dt><dd>96.2 MB (96,206,615 bytes)</dd></div>
+          <div><dt>SHA-256</dt><dd><span class="hash"><code id="dlHash">2b1cc24dbfb6569b9c52eeecbf30cb570607a43da276f10a3338c8b4314e85db</code><button class="copy" type="button" data-copy="dlHash">Copy</button></span></dd></div>
+          <div><dt>Installs to</dt><dd>Your user account only. Adds desktop and Start menu shortcuts; you can pick the folder.</dd></div>
+          <div><dt>Built on</dt><dd>Electron 38 (Chromium 140)</dd></div>
+          <div><dt>Tested</dt><dd>259 unit and 19 end-to-end tests pass; the packaged app was checked under Wine. A full hands-on pass on real Windows is still to come.</dd></div>
+        </dl>
+      </div>
+      <div class="bay-main">
+        <h3>Install in three steps</h3>
+        <ol class="steps">
+          <li><b>Check the file.</b> In PowerShell, run <code>Get-FileHash .\AETHER-Setup-0.3.2.exe</code> and compare the result with the SHA-256 on this page.</li>
+          <li><b>Run the installer.</b> The build isn't code-signed yet, so Windows SmartScreen may warn the first time. Choose <b>More info</b>, then <b>Run anyway</b>.</li>
+          <li><b>Stay up to date.</b> When a newer version is available, AETHER offers <b>Restart and update</b>. It checks the new installer's SHA-256 before running it and brings your windows and tabs back afterwards.</li>
+        </ol>
+        <p class="callout" style="margin-top:4px"><b>Already using AETHER?</b> Your profiles, passwords and sessions live in <code>%APPDATA%\AETHER</code> and are kept when you install a newer version over the old one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>AETHER is a working name until trademark and domain checks are done.</span>
+    <span>Open source under MPL-2.0</span>
+  </div>
+</footer>
+
+<script>
+/* ===== Edit this block when a release ships or the download host changes ===== */
+const RELEASE = {
+  latest: "0.3.2",
+  file: "AETHER-Setup-0.3.2.exe",
+  sha256: "2b1cc24dbfb6569b9c52eeecbf30cb570607a43da276f10a3338c8b4314e85db",
+  downloadUrl: "https://github.com/Kailu687/AetherBrowser/releases/download/v0.3.2/AETHER-Setup-0.3.2.exe" // e.g. https://github.com/<owner>/<repo>/releases/download/v0.3.2/AETHER-Setup-0.3.2.exe
+};
+
+const VERSIONS = [
+  { v: "0.4.0", date: "In development", status: "plan",
+    summary: "The first release with AETHER Modules. This is the plan, not a promise: anything that isn't finished and tested moves to a later version.",
+    groups: { "Planned": [
+      "Module system: each module has a manifest with its version, dependencies, the permissions it asks for, and an integrity check before it installs.",
+      "Modules never get your passwords, cookies, arbitrary files, shell commands or another module's data. Anything risky asks you first and runs in a restricted process.",
+      "First modules in progress: Research &amp; Writing, Electronics &amp; ECE, Computer Science &amp; Embedded Dev, and early Aerospace, Mechanical and Biotech tools.",
+      "Security hardening across the browser and the add-on boundary.",
+      "Google sign-in improvements."
+    ] } },
+  { v: "0.3.2", date: "31 Oct 2026", status: "ship",
+    summary: "Per-site switches for when ad blocking breaks a site.",
+    groups: {
+      "Added": [
+        "Per-site ad-block switches in the Privacy panel: turn off ad-block scripts here, or turn off element hiding here. Request blocking stays on, so a site that breaks keeps most of its protection.",
+        "Diagnostics: the <code>AETHER_SKIP_SCRIPTLETS</code> setting skips matching scriptlets, to find the one that breaks a site."
+      ],
+      "Known issue": [
+        "YouTube watch pages don't fully load with ad blocking on: the player shows, but the title and related videos don't. Workaround: in the Privacy panel, turn off ad-block scripts on youtube.com."
+      ] } },
+  { v: "0.3.1", date: "31 Oct 2026", status: "ship",
+    summary: "Browser menu, one-click themes and a redesigned sidebar.",
+    groups: {
+      "Fixed": [
+        "Ad-block scriptlets now each run in their own scope, so one failing can't break the page. This fixed the first YouTube player problem.",
+        "The \"Show bookmarks bar\" checkbox in Settings is laid out properly."
+      ],
+      "Added": [
+        "⋮ browser menu: new tab, window or private window; history, downloads, bookmarks, passwords, privacy; zoom, find, reader view, print; theme, settings, about and exit.",
+        "Theme button in the toolbar for switching themes in one click."
+      ],
+      "Changed": [
+        "Redesigned sidebar: proper icons, buttons grouped by feature, a clear marker for the open panel, a taller header, a clearer Passwords layout and friendly empty states."
+      ] } },
+  { v: "0.3.0", date: "30 Oct 2026", status: "ship",
+    summary: "Bookmarks bar, reader view, tab groups and password saving.",
+    groups: {
+      "Added": [
+        "Bookmarks bar (Ctrl+Shift+B) with folder menus, \"Open all\" and right-click actions.",
+        "Reader view (Ctrl+Alt+R): a clean, script-free article view with text size and serif or sans.",
+        "Tab groups with names, colours and collapse, saved with windows and workspaces.",
+        "Save-password offer after you sign in. Nothing is saved without your click.",
+        "Calculate a selection: select a formula such as <code>4.7k*2.2u</code> and the right-click menu shows the answer.",
+        "Unpacked Chrome extensions per profile (experimental): content scripts and background workers work; toolbar popups don't yet.",
+        "Aviation theme upgrade: aircraft and spaceflight icon set, lit push-buttons, star-field sidebar, instrument new tab page. Themes can now ship their own icons."
+      ] } },
+  { v: "0.2.0", date: "30 Oct 2026", status: "ship",
+    summary: "The first Windows installer, stronger ad blocking, and the password manager.",
+    groups: {
+      "Added": [
+        "Windows installer (per user, no admin) with desktop and Start menu shortcuts.",
+        "Updates with a checksum check: AETHER offers \"Restart and update\", verifies the installer's SHA-256 and restores your windows.",
+        "Stronger ad blocking on by default: element hiding, uBlock Origin scriptlets, more filter lists, and your own <code>##</code> hiding rules.",
+        "Address-bar calculator with units, e.g. <code>= 3.3V / 470ohm in mA</code>, <code>255 to hex</code>, <code>10k || 10k</code>.",
+        "Themes: AETHER, Aviation, Daylight, Midnight, Paper, High contrast and System.",
+        "Password manager per profile, encrypted with your Windows account; import from Google, Chrome, Edge or Firefox CSV; export."
+      ],
+      "Changed": [ "The toolbar shows a key icon when the current site has saved logins." ] } },
+  { v: "0.1.0", date: "29 Oct 2026", status: "ship",
+    summary: "The first working browser.",
+    groups: {
+      "Added": [
+        "Profiles with isolated storage, multiple windows, and workspaces with notes and reading positions.",
+        "\"Keep this window?\" on close, with session restore.",
+        "Split view, private windows, bookmarks, history, downloads, find, zoom, print and a PDF viewer.",
+        "Bang shortcuts and the command palette; crash recovery and a memory saver.",
+        "Modules: Privacy (ad and tracker blocking, HTTPS upgrade, tracking-parameter stripping, GPC), Focus and time tracking, and Research (notes, citations, PDF annotations, calculators, paper writer)."
+      ] } }
+];
+
+const CORE = [
+  ["ship", "Profiles that never mix", "Each has its own cookies, sign-ins, cache, history and downloads."],
+  ["ship", "Windows and workspaces", "Many windows per profile; workspaces keep tabs, reading positions and notes."],
+  ["ship", "Session restore", "\"Keep this window?\" on close. Tabs come back after a crash or restart."],
+  ["ship", "Ad and tracker blocking", "On by default, with per-site switches when a site breaks."],
+  ["ship", "Password manager", "Encrypted with your Windows account. Fills only when you click."],
+  ["ship", "Private windows", "Kept in memory and wiped on close."],
+  ["ship", "Focus and time tracking", "Local only; nothing leaves your machine."],
+  ["prev", "Chrome extensions", "Unpacked extensions per profile. Toolbar popups don't work yet."],
+  ["plan", "AI controls", "Optional local or cloud models that you configure. Off unless you turn it on."],
+  ["plan", "Add-on manager", "Install, update and remove modules, with a permission review."]
+];
+const STUDIO = [
+  ["prev", "Paper writer", "Templates for IEEE, APA 7, literature reviews, lab reports, internship reports and thesis chapters. Exports Markdown, LaTeX and HTML."],
+  ["prev", "Citations", "APA, MLA, Chicago and IEEE styles; BibTeX and RIS import."],
+  ["prev", "Notes and PDF annotations", "Per-workspace notebook and highlights on PDFs."],
+  ["ship", "Engineering calculators", "Units-aware maths in the address bar and on any selected text."],
+  ["plan", "Full document editor", "Styles, tables, equations, headers and footers, page numbers, comments, revisions. DOCX and PDF export, tested on complex documents before we call it compatible."],
+  ["plan", "Writing Intelligence", "Flags unsupported claims, citation problems and repetition. You accept, reject or edit each suggestion. No AI-detector evasion."],
+  ["plan", "Code editor, terminal, notebooks", "Uses the toolchains already on your machine and says clearly when one is missing."]
+];
+const ICONS = {
+  book: '<path d="M2.5 3.5c2-.8 3.8-.6 5.5.6 1.7-1.2 3.5-1.4 5.5-.6v9c-2-.8-3.8-.6-5.5.6-1.7-1.2-3.5-1.4-5.5-.6zM8 4.1v9"/>',
+  chip: '<rect x="4" y="4" width="8" height="8" rx="1.2"/><rect x="6.2" y="6.2" width="3.6" height="3.6"/><path d="M6 2v2M10 2v2M6 12v2M10 12v2M2 6h2M2 10h2M12 6h2M12 10h2"/>',
+  code: '<path d="m5.5 4.5-3.5 3.5 3.5 3.5M10.5 4.5l3.5 3.5-3.5 3.5M9 3 7 13"/>',
+  plane: '<path d="M8 2.2c.6 0 1 .7 1 1.6v2.8l4.8 2.8v1.4L9 9.4v2.6l1.6 1.2v1.1L8 13.6l-2.6.7v-1.1L7 12V9.4l-4.8 1.4V9.4L7 6.6V3.8c0-.9.4-1.6 1-1.6z"/>',
+  gear: '<circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/><circle cx="8" cy="8" r="4.3"/>',
+  flask: '<path d="M6 2h4M6.6 2v4.3L3 12.6c-.5.9.1 1.9 1.1 1.9h7.8c1 0 1.6-1 1.1-1.9L9.4 6.3V2M4.8 10h6.4"/>',
+  beam: '<path d="M2 4h12M2 12h12M5 4v8M11 4v8M5 4l6 8M11 4l-6 8"/>',
+  wave: '<path d="M2 8c1.2-3 2.3-3 3.5 0s2.3 3 3.5 0 2.3-3 3.5 0M8 2.5v1.5M8 12v1.5"/>',
+  sigma: '<path d="M12 3H4l4.5 5L4 13h8"/>',
+  folder: '<path d="M2 4.5c0-.6.4-1 1-1h3.2l1.3 1.5H13c.6 0 1 .4 1 1v6.5c0 .6-.4 1-1 1H3c-.6 0-1-.4-1-1z"/><path d="M5 9.5h6M5 11.5h4"/>',
+  chart: '<path d="M2.5 13.5h11M4 11V8M7 11V5M10 11V7M13 11V3"/>'
+};
+const MODULES = [
+  ["book", "Research &amp; Writing", "prev", "Papers, citations, PDFs, document editing and literature review. Paper writer, citations, notes and PDF annotation are in preview today; source discovery, comparison matrices and source-linked drafting are coming.", "Never invents references, quotes, findings or research gaps. Offline libraries and drafts keep working without internet."],
+  ["chip", "Electronics &amp; ECE", "plan", "Datasheets, component selection, SPICE simulation through an established engine, PCB design hand-off and bills of materials with supplier links.", "Not every part in a catalogue can be simulated. Prices and stock come only from live, verifiable sources."],
+  ["code", "Computer Science &amp; Embedded Dev", "plan", "Code editor, compilers, debugging, API testing, terminals and embedded firmware workflows for Python, C, C++, JavaScript and TypeScript.", "Uses toolchains on your machine and says when one is missing. Never runs code from a page, project, module or AI answer on its own."],
+  ["plane", "Aerospace &amp; Space", "plan", "Aircraft performance, aerodynamics, orbital mechanics and avionics, plus communications and RF: link budgets, antennas, spectrum analysis and SDR workflows. Links to CAD and CFD tools.", "Integrates with CAD and CFD tools; it doesn't replace them."],
+  ["gear", "Mechanical Engineering", "plan", "CAD integrations, materials, mechanics, manufacturing and thermal calculations.", "Calculations show their inputs, units and assumptions."],
+  ["beam", "Civil &amp; Structural", "plan", "Structural calculation workflows, materials, surveying and quantity estimation.", "Not a certified structural solver."],
+  ["flask", "Biotechnology &amp; Bioengineering", "plan", "Molecular structures, sequences, lab notebooks and analysis.", "Not a full biological analysis suite."],
+  ["chart", "Data Science &amp; AI", "plan", "Notebooks, datasets, machine learning and reproducible experiment records.", "Runs on your machine; nothing is uploaded unless you choose to."],
+  ["sigma", "Mathematics, Physics &amp; Scientific Computing", "plan", "Symbolic and numerical maths, physics calculations, plotting and scientific computing, with units carried through every step.", "Shows the method and assumptions behind each result; it doesn't hide approximations."],
+  ["folder", "Project Intelligence &amp; Lab", "plan", "Shared project files, calculations, tests, revisions and deliverables. Link a datasheet spec to a circuit requirement and see what is satisfied, violated or still unknown.", "Every recommendation links back to its source, inputs or test result."]
+];
+
+const EXPLORE = [
+  { id: "browse", tab: "Browsing", title: "Many lives, one browser, no mixing",
+    lede: "Keep university, internship and personal browsing in separate profiles, and switch whole research contexts with workspaces.",
+    items: [
+      ["Profiles", "Separate cookies, sign-ins, cache, site data, history, bookmarks and downloads.", ""],
+      ["Workspaces", "Tabs, active tab, reading positions and notes are saved when you switch away.", ""],
+      ["Command palette", "Jump to any tab, workspace, profile or action.", "Ctrl+K"],
+      ["Tab groups and split view", "Named, coloured groups; two tabs side by side.", "Ctrl+\\"],
+      ["Reader view", "A clean, script-free version of any article.", "Ctrl+Alt+R"],
+      ["Memory saver and crash recovery", "Background tabs sleep; a crashed tab shows a recovery screen.", ""]
+    ],
+    shots: [["workspaces-menu.png", "Workspaces keep each research context separate"], ["command-palette.png", "The command palette (Ctrl+K)"]] },
+  { id: "privacy", tab: "Privacy", title: "Blocking on from the first launch",
+    lede: "Ads and trackers are blocked before the page loads. If a site breaks, you can relax protection for that one site without turning it off everywhere.",
+    items: [
+      ["Ad and tracker blocking", "EasyList, EasyPrivacy and uBlock filter lists, about 110,000 rules in our test build.", ""],
+      ["Element hiding and scriptlets", "Removes leftover ad boxes and anti-adblock walls.", ""],
+      ["Balanced or Strict", "Strict also blocks third-party cookies and upgrades to HTTPS.", ""],
+      ["Per-site switches", "Turn off scripts or hiding on one site; request blocking stays on.", "0.3.2"],
+      ["Tracking-parameter stripping and GPC", "Removes utm and similar tags; sends Global Privacy Control.", ""],
+      ["Passwords", "OS-encrypted, fill on click, 30-second clipboard clear, CSV import.", "Ctrl+Shift+L"]
+    ],
+    shots: [["p-Privacy.png", "The Privacy panel shows what was blocked on each site"], ["passwords-aviation.png", "The password manager, in the Aviation theme"]] },
+  { id: "research", tab: "Research and writing", title: "From sources to a paper, in one window",
+    lede: "These tools work today as a preview. The full Studio document editor is still being built.",
+    items: [
+      ["Paper writer", "Templates for IEEE, APA 7, literature review, lab report, technical report and thesis chapter.", "Preview"],
+      ["Exports", "Markdown, LaTeX and HTML with your bibliography.", "Preview"],
+      ["Citations", "APA, MLA, Chicago and IEEE; import BibTeX and RIS.", "Preview"],
+      ["Notes and PDF annotation", "Per-workspace notebook; highlights on PDFs.", "Preview"],
+      ["Research bangs", "<code>!scholar</code>, <code>!arxiv</code>, <code>!ieee</code>, <code>!doi</code> search straight from the address bar.", ""]
+    ],
+    shots: [["p-Writer.png", "Start a paper from a template"]] },
+  { id: "engineer", tab: "Engineering tools", title: "The address bar is a calculator",
+    lede: "Type an expression with units and get the answer as you type. Bang shortcuts jump straight to datasheets and part suppliers.",
+    items: [
+      ["Units-aware maths", "<code>= 3.3V / 470ohm in mA</code>, <code>12 kN*m to lbf*ft</code>, <code>100 °C to °F</code>", ""],
+      ["Number bases", "<code>255 to hex</code>, <code>-1 to hex16</code>, <code>0b1010 + 0x10</code>", ""],
+      ["Parallel resistors", "<code>10k || 10k</code>", ""],
+      ["Calculate a selection", "Select <code>4.7k*2.2u</code> on any page and right-click.", ""],
+      ["Part and datasheet bangs", "<code>!ds</code>, <code>!dk</code>, <code>!mouser</code>, <code>!octo</code>, <code>!gh</code>, <code>!so</code>, <code>!wa</code>", ""]
+    ],
+    shots: [["theme-aether.png", "The new tab page with bang shortcuts"]] },
+  { id: "themes", tab: "Themes", title: "Seven themes, including a glass cockpit",
+    lede: "AETHER, Daylight, Midnight, Paper, High contrast, System, and Aviation: an avionics-inspired theme with its own aircraft and spaceflight icon set.",
+    items: [
+      ["Aviation theme", "Attitude and heading instruments on the new tab page, a compass title bar and a DEST address bar.", ""],
+      ["Flight-deck icons", "35 aircraft and space glyphs replace the standard icons.", ""],
+      ["One-click switching", "Theme button in the toolbar, or Settings → Theme.", ""],
+      ["High contrast", "For low-vision use and bright rooms.", ""]
+    ],
+    shots: [["aviation-newtab-menu.png", "The Aviation theme's new tab page and profile menu"], ["aviation-toolbar-sidebar.png", "Aviation toolbar and sidebar"], ["flight-deck-icons.png", "The flight-deck icon set"]] }
+];
+
+const SEC_ON = [
+  ["Websites can't reach the browser's insides", "Each tab is sandboxed and context-isolated, with no Node access and no bridge to the app."],
+  ["Profiles are walled off", "Separate storage partitions per profile, and a fresh in-memory one per private window."],
+  ["Passwords are encrypted by Windows", "If the system can't encrypt them, AETHER refuses to save them rather than store plain text."],
+  ["Passwords fill only where they belong", "Only on your click, after re-checking the site's domain, never into http for an https login."],
+  ["Clipboard is cleared", "A copied password is wiped after 30 seconds."],
+  ["Dangerous addresses are refused", "<code>javascript:</code>, <code>data:</code>, <code>vbscript:</code> and similar URLs can't be typed or pasted."],
+  ["Permissions are asked per site", "Camera, mic, location and notifications prompt each time unless you choose to remember."],
+  ["Updates are checksum-verified", "The installer's SHA-256 must match before it runs."],
+  ["No telemetry", "No account and no cloud. Your data stays on your machine."]
+];
+const SEC_OFF = [
+  ["Code signing", "Windows SmartScreen warns on first install."],
+  ["Safe Browsing", "No phishing or malware URL checks yet."],
+  ["Mark-of-the-Web", "Downloaded files aren't tagged for SmartScreen yet."],
+  ["Password master lock", "Anyone using your unlocked Windows account can view saved passwords."],
+  ["Profile lock", "Profiles can't be password-protected yet."],
+  ["Encrypted local database", "History and notes are stored unencrypted on disk."]
+];
+
+/* ===== rendering ===== */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => s; // content above is authored here, trusted
+const pill = st => ({ ship: '<i class="pill s-ship">Available</i>', prev: '<i class="pill s-prev">Preview</i>', plan: '<i class="pill s-plan">Planned</i>' })[st];
+
+document.querySelectorAll("[data-latest]").forEach(n => n.textContent = RELEASE.latest);
+
+function items(list, el) {
+  el.innerHTML = list.map(([st, t, d]) => `<div class="item">${pill(st)}<b>${t}</b><span>${d}</span></div>`).join("");
+}
+items(CORE, $("#coreItems"));
+items(STUDIO, $("#studioItems"));
+$("#labs").innerHTML = MODULES.map(([ic, t, st, d, lim]) => `
+  <div class="lab">
+    <div class="lab-top"><span class="lab-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[ic]}</svg></span><h4>${t}</h4></div>
+    ${pill(st)}
+    <p>${d}</p>
+    <p class="limit"><b>Limits:</b> ${lim}</p>
+  </div>`).join("");
+
+/* explorer */
+let exShot = 0, exCur = EXPLORE[0];
+function showShot(i) {
+  exShot = i;
+  const [src, cap] = exCur.shots[i];
+  $("#exImg").src = "img/" + src; $("#exImg").alt = cap; $("#exCap").textContent = cap;
+  $("#exDots").querySelectorAll(".dot").forEach((d, j) => d.setAttribute("aria-pressed", j === i));
+}
+function showEx(id) {
+  exCur = EXPLORE.find(e => e.id === id) || EXPLORE[0];
+  $("#exTabs").querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.id === exCur.id));
+  $("#exTitle").textContent = exCur.title;
+  $("#exLede").textContent = exCur.lede;
+  $("#exList").innerHTML = exCur.items.map(([b, s, k]) => `<li><b>${b}</b><span class="k">${k}</span><small>${s}</small></li>`).join("");
+  $("#exDots").innerHTML = exCur.shots.length > 1 ? exCur.shots.map((s, i) => `<button class="dot" type="button" aria-label="Screenshot ${i + 1}: ${s[1]}" data-i="${i}"></button>`).join("") : "";
+  showShot(0);
+}
+$("#exTabs").innerHTML = EXPLORE.map(e => `<button class="tab" role="tab" type="button" id="tab-${e.id}" data-id="${e.id}">${e.tab}</button>`).join("");
+$("#exTabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if (b) showEx(b.dataset.id); });
+$("#exDots").addEventListener("click", e => { const b = e.target.closest(".dot"); if (b) showShot(+b.dataset.i); });
+showEx("browse");
+
+/* security */
+const rows = list => list.map(([b, s]) => `<div class="row"><b>${b}</b><span>${s}</span></div>`).join("");
+$("#secOn").innerHTML = rows(SEC_ON);
+$("#secOff").innerHTML = rows(SEC_OFF);
+
+/* versions */
+function statusPill(v) { return v.status === "plan" ? '<i class="pill s-plan">Upcoming</i>' : v.v === RELEASE.latest ? '<i class="pill s-ship">Latest</i>' : ""; }
+function showVer(vn) {
+  const v = VERSIONS.find(x => x.v === vn) || VERSIONS[1];
+  $("#vList").querySelectorAll(".vbtn").forEach(b => b.setAttribute("aria-selected", b.dataset.v === v.v));
+  const groups = Object.entries(v.groups).map(([g, list]) => `<div class="grp ${g === "Known issue" ? "known" : ""}"><h4>${g}</h4><ul>${list.map(x => `<li>${x}</li>`).join("")}</ul></div>`).join("");
+  const dl = v.status === "plan" ? "" : v.v === RELEASE.latest
+    ? `<div><a class="btn btn-primary btn-sm" href="#download" data-dl>Download ${v.v}</a></div>`
+    : `<p class="vsum" style="font-size:.88rem">Older installers aren't published here. Install the latest version; it keeps your data.</p>`;
+  $("#vCard").innerHTML = `<div class="vcard-head"><h3>${v.v}</h3><span class="vd">${v.date}</span>${statusPill(v)}</div><p class="vsum">${v.summary}</p>${groups}${dl}`;
+  wireDownloads();
+}
+$("#vList").innerHTML = VERSIONS.map(v => `<button class="vbtn" role="tab" type="button" data-v="${v.v}"><span class="vn">${v.v} ${statusPill(v)}</span><span class="vd">${v.date}</span></button>`).join("");
+$("#vList").addEventListener("click", e => { const b = e.target.closest(".vbtn"); if (b) showVer(b.dataset.v); });
+showVer(RELEASE.latest);
+
+/* compare */
+const shipped = VERSIONS.filter(v => v.status !== "plan").slice().reverse(); // oldest first
+const opts = shipped.map(v => `<option value="${v.v}">${v.v}</option>`).join("");
+$("#cmpFrom").innerHTML = opts; $("#cmpTo").innerHTML = opts;
+$("#cmpFrom").value = "0.2.0"; $("#cmpTo").value = RELEASE.latest;
+function compare() {
+  let a = shipped.findIndex(v => v.v === $("#cmpFrom").value), b = shipped.findIndex(v => v.v === $("#cmpTo").value);
+  if (a === b) { $("#cmpOut").innerHTML = `<p class="vsum">Pick two different versions.</p>`; return; }
+  const older = Math.min(a, b), newer = Math.max(a, b);
+  const span = shipped.slice(older + 1, newer + 1).reverse();
+  const merged = {};
+  span.forEach(v => Object.entries(v.groups).forEach(([g, list]) => {
+    if (g === "Known issue" && v.v !== shipped[newer].v) return;
+    (merged[g] ||= []).push(...list.map(x => `<span class="v">${v.v}</span>${x}`));
+  }));
+  const n = Object.values(merged).reduce((s, l) => s + l.length, 0);
+  const head = `<p class="vsum">Updating from <b>${shipped[older].v}</b> to <b>${shipped[newer].v}</b> brings ${n} changes across ${span.length} release${span.length > 1 ? "s" : ""}.</p>`;
+  $("#cmpOut").innerHTML = head + ["Added", "Changed", "Fixed", "Known issue"].filter(g => merged[g]).map(g => `<div class="grp ${g === "Known issue" ? "known" : ""}"><h4>${g}</h4><ul>${merged[g].map(x => `<li>${x}</li>`).join("")}</ul></div>`).join("");
+}
+$("#cmpFrom").addEventListener("change", compare); $("#cmpTo").addEventListener("change", compare);
+compare();
+
+/* download wiring */
+$("#dlFile").textContent = RELEASE.file; $("#dlHash").textContent = RELEASE.sha256; $("#dlLabel").textContent = "Download " + RELEASE.file;
+function wireDownloads() {
+  document.querySelectorAll("[data-dl]").forEach(a => {
+    if (RELEASE.downloadUrl) { a.href = RELEASE.downloadUrl; a.target = "_blank"; a.rel = "noopener"; }
+    else if (!a.dataset.wired) {
+      a.dataset.wired = "1";
+      a.addEventListener("click", () => { $("#dlPending").classList.add("show"); });
+    }
+  });
+}
+wireDownloads();
+if (!RELEASE.downloadUrl) $("#dlBtn").addEventListener("click", e => { e.preventDefault(); $("#dlPending").classList.add("show"); });
+
+/* copy */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-copy]"); if (!b) return;
+  const el = document.getElementById(b.dataset.copy);
+  const done = () => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1600); };
+  try {
+    navigator.clipboard.writeText(el.textContent).then(done, () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected"; });
+  } catch (_) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+});
+
+/* address bar demo — inputs are real AETHER syntax; results worked out by hand */
+const DEMO = [
+  ["= 3.3V / 470ohm in mA", "Calculator", "7.02 mA", "Enter copies the result"],
+  ["1/(2*pi*10kohm*100nF)", "Calculator", "159.15 Hz", "RC cut-off frequency"],
+  ["10k || 10k", "Calculator", "5 kΩ", "Parallel resistors"],
+  ["12 kN*m to lbf*ft", "Calculator", "≈ 8,851 lbf·ft", "Unit conversion"],
+  ["255 to hex", "Calculator", "0xFF", "Number bases"],
+  ["!ds LM358", "Bang", "Datasheet search", "Opens a datasheet search for LM358"],
+  ["!arxiv radar", "Bang", "arXiv search", "Searches arXiv for \"radar\""]
+];
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let di = 0, timer = null, typing = null;
+$("#omniChips").innerHTML = DEMO.map((d, i) => `<button class="chip" type="button" data-i="${i}" aria-pressed="${i === 0}">${d[0]}</button>`).join("");
+function render(i, typed) {
+  const [q, tag, res, note] = DEMO[i];
+  $("#omniChips").querySelectorAll(".chip").forEach((c, j) => c.setAttribute("aria-pressed", j === i));
+  $("#omniTag").textContent = tag; $("#omniNote").textContent = note;
+  if (reduce || !typed) { $("#omniText").textContent = q; $("#omniResult").textContent = res; return; }
+  clearInterval(typing); let n = 0; $("#omniResult").textContent = "";
+  typing = setInterval(() => {
+    n++; $("#omniText").textContent = q.slice(0, n);
+    if (n >= q.length) { clearInterval(typing); $("#omniResult").textContent = res; }
+  }, 45);
+}
+function cycle() { di = (di + 1) % DEMO.length; render(di, true); }
+function start() { if (!reduce) { clearInterval(timer); timer = setInterval(cycle, 3800); } }
+$("#omniChips").addEventListener("click", e => { const c = e.target.closest(".chip"); if (!c) return; di = +c.dataset.i; render(di, true); start(); });
+render(0, false); start();
+</script>
+
+</body>
+</html>
