@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npx vitest run
+      - name: Build installer
+        working-directory: apps/desktop
+        run: |
+          node scripts/build.mjs
+          npx electron-builder --win --x64 --publish never
+          node scripts/write-manifest.mjs "${{ github.ref_name }}"
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: AETHER ${{ github.ref_name }}
+          body_path: docs/release-notes.md
+          files: |
+            apps/desktop/release/AETHER-Setup-*.exe
+            apps/desktop/release/latest.json
