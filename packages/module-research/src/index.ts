@@ -1,0 +1,14 @@
+export { manifest } from "./manifest.js";
+export { createMainModule, MODULE_ID } from "./module.js";
+export * from "./model.js";
+export { LabNet, NetError, ALLOWED_HOSTS, type FetchLike } from "./net.js";
+export { discover, mergeHits, searchArxiv, searchCrossref, searchOpenAlex, searchSemanticScholar, invertedIndexToText, openAlexToHit, s2ToHit, type DiscoveryQuery, type DiscoveryRun } from "./discovery.js";
+export { verifyReference, compareReferences, applyCorrections, crossrefNotices } from "./verify.js";
+export { qualityReport, citedKeys, QUALITY_LIMITS, type QualityReport, type QualityFinding } from "./quality.js";
+export { heuristicSuggestions, extractionPrompt, parseAiSuggestions } from "./extraction.js";
+export { buildMatrix, matrixToCsv, matrixToMarkdown, gapHypotheses, buildOutline, outlineToMarkdown, screeningCounts, sourceLabel, DEFAULT_CRITERIA, type Matrix, type MatrixCell, type GapHypothesis, type ReviewOutline } from "./analysis.js";
+export { searchSaved } from "./store.js";
+export { citationGraph, topicTimeline, projectTimeline, type CitationGraph, type RelatedSuggestion } from "./graph.js";
+export { checkCitations, SUPPORT_LIMITS, type CitationReport, type CitationCheck } from "./support.js";
+export { refineQuestion, benchmarkTable, reviewReport } from "./review.js";
+export { googleScholarUrl, searchPubMed, pubmedToHit } from "./discovery.js";

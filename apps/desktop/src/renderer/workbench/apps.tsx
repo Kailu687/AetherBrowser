@@ -47,6 +47,13 @@ const FROM_MODULES: AppDef[] = MODULE_UIS.flatMap((m) =>
   })),
 );
 
-export const APPS: AppDef[] = [...BUILT_IN, ...FROM_MODULES];
+/**
+ * Built-in apps shipped in this release. 0.4.0 is the Writer-first launch:
+ * Code, Projects and Engineering are finished in source but stay hidden until
+ * they have had the same in-app testing.
+ */
+const RELEASED = new Set(['store', 'writer']);
+
+export const APPS: AppDef[] = [...BUILT_IN.filter((a) => RELEASED.has(a.id)), ...FROM_MODULES];
 
 export const getApp = (id: string) => APPS.find((a) => a.id === id);
