@@ -259,7 +259,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
 <!-- ================= HERO ================= -->
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow">Desktop browser · Windows · v<span data-latest>0.3.2</span></span>
+    <span class="eyebrow">Desktop browser · Windows · v<span data-latest>0.4.0</span></span>
     <h1>Browse deeply. <em>Build</em> without distraction.</h1>
     <p class="lede">AETHER is a private, local-first browser for engineers, students and researchers. Separate profiles that never share cookies, workspaces that remember where you were, strong ad blocking on by default, and engineering tools right in the address bar. No account, no cloud and no telemetry.</p>
     <div class="hero-cta">
@@ -269,7 +269,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
       </a>
       <a class="btn btn-ghost" href="#explore">Explore the features</a>
     </div>
-    <p class="hero-meta"><span>Windows 10/11 · 64-bit</span><span>96 MB</span><span>No admin needed</span><span>Free, MPL-2.0</span></p>
+    <p class="hero-meta"><span>Windows 10/11 · 64-bit</span><span>97 MB</span><span>No admin needed</span><span>Free, MPL-2.0</span></p>
 
     <div class="omni" aria-label="Address bar demo">
       <div class="omni-bar">
@@ -331,7 +331,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
         <div class="layer-id">
           <span class="lv">Layer 3</span>
           <h3>AETHER Modules</h3>
-          <p>Installable toolkits for each discipline. The launch ships one: Research &amp; Writing, in preview. The other modules come in later releases.</p>
+          <p>Installable toolkits for each discipline. Research &amp; Writing ships in 0.4.0. Data Science &amp; ML, powered by Epoch, comes next. The other modules follow in later releases.</p>
         </div>
         <div class="labs" id="labs"></div>
       </article>
@@ -344,7 +344,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Feature explorer</span>
-      <h2>What's in version <span data-latest>0.3.2</span></h2>
+      <h2>What's in version <span data-latest>0.4.0</span></h2>
       <p class="lede">Every item here is in the current installer. Screenshots are from the real app.</p>
     </div>
     <div class="tabs" role="tablist" aria-label="Feature areas" id="exTabs"></div>
@@ -416,7 +416,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
     <div class="bay">
       <div class="bay-main">
         <span class="eyebrow">Download</span>
-        <h2>AETHER <span data-latest>0.3.2</span> for Windows</h2>
+        <h2>AETHER <span data-latest>0.4.0</span> for Windows</h2>
         <div class="platforms">
           <span class="plat on">Windows 10/11 · x64</span>
           <span class="plat">macOS · not yet</span>
@@ -425,23 +425,23 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
         <div>
           <a class="btn btn-primary" href="#download" data-dl id="dlBtn">
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 2v8m0 0 3.2-3.2M8 10 4.8 6.8M2.5 13.5h11"/></svg>
-            <span id="dlLabel">Download AETHER-Setup-0.3.2.exe</span>
+            <span id="dlLabel">Download AETHER-Setup-0.4.0.exe</span>
           </a>
         </div>
         <p class="pending" id="dlPending" role="status">The public download link is being set up. Until then, the installer is available from the project's <code>releases</code> folder.</p>
         <dl class="spec">
-          <div><dt>File</dt><dd class="mono" id="dlFile">AETHER-Setup-0.3.2.exe</dd></div>
-          <div><dt>Size</dt><dd>96.2 MB (96,206,615 bytes)</dd></div>
-          <div><dt>SHA-256</dt><dd><span class="hash"><code id="dlHash">2b1cc24dbfb6569b9c52eeecbf30cb570607a43da276f10a3338c8b4314e85db</code><button class="copy" type="button" data-copy="dlHash">Copy</button></span></dd></div>
+          <div><dt>File</dt><dd class="mono" id="dlFile">AETHER-Setup-0.4.0.exe</dd></div>
+          <div><dt>Size</dt><dd>97.0 MB (96,951,655 bytes)</dd></div>
+          <div><dt>SHA-256</dt><dd><span class="hash"><code id="dlHash">5575b44b501af06f2bbc5ce0f141a151e1780c1875421b414e6a600775db3abd</code><button class="copy" type="button" data-copy="dlHash">Copy</button></span></dd></div>
           <div><dt>Installs to</dt><dd>Your user account only. Adds desktop and Start menu shortcuts; you can pick the folder.</dd></div>
           <div><dt>Built on</dt><dd>Electron 38 (Chromium 140)</dd></div>
-          <div><dt>Tested</dt><dd>259 unit and 19 end-to-end tests pass; the packaged app was checked under Wine. A full hands-on pass on real Windows is still to come.</dd></div>
+          <div><dt>Built by</dt><dd>GitHub Actions on Windows, straight from the <a href="https://github.com/Kailu687/AetherBrowser">public source</a>.</dd></div>
         </dl>
       </div>
       <div class="bay-main">
         <h3>Install in three steps</h3>
         <ol class="steps">
-          <li><b>Check the file.</b> In PowerShell, run <code>Get-FileHash .\AETHER-Setup-0.3.2.exe</code> and compare the result with the SHA-256 on this page.</li>
+          <li><b>Check the file.</b> In PowerShell, run <code>Get-FileHash .\AETHER-Setup-0.4.0.exe</code> and compare the result with the SHA-256 on this page.</li>
           <li><b>Run the installer.</b> The build isn't code-signed yet, so Windows SmartScreen may warn the first time. Choose <b>More info</b>, then <b>Run anyway</b>.</li>
           <li><b>Stay up to date.</b> When a newer version is available, AETHER offers <b>Restart and update</b>. It checks the new installer's SHA-256 before running it and brings your windows and tabs back afterwards.</li>
         </ol>
@@ -455,28 +455,44 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
 <footer>
   <div class="wrap">
     <span>AETHER is a working name until trademark and domain checks are done.</span>
-    <span>Open source under MPL-2.0</span>
+    <span>Open source under MPL-2.0 · <a href="https://github.com/Kailu687/AetherBrowser">GitHub</a> · <a href="https://github.com/Kailu687/AetherBrowser/releases">All releases</a></span>
   </div>
 </footer>
 
 <script>
 /* ===== Edit this block when a release ships or the download host changes ===== */
 const RELEASE = {
-  latest: "0.3.2",
-  file: "AETHER-Setup-0.3.2.exe",
-  sha256: "2b1cc24dbfb6569b9c52eeecbf30cb570607a43da276f10a3338c8b4314e85db",
-  downloadUrl: "https://github.com/Kailu687/AetherBrowser/releases/download/v0.3.2/AETHER-Setup-0.3.2.exe" // e.g. https://github.com/<owner>/<repo>/releases/download/v0.3.2/AETHER-Setup-0.3.2.exe
+  latest: "0.4.0",
+  file: "AETHER-Setup-0.4.0.exe",
+  sha256: "5575b44b501af06f2bbc5ce0f141a151e1780c1875421b414e6a600775db3abd",
+  downloadUrl: "https://github.com/Kailu687/AetherBrowser/releases/download/v0.4.0/AETHER-Setup-0.4.0.exe"
 };
 
 const VERSIONS = [
-  { v: "0.4.0", date: "In development", status: "plan",
-    summary: "Focused on the browser and the Research &amp; Writing module. This is the plan, not a promise: anything that isn't finished and tested moves to a later version.",
+  { v: "0.5.0", date: "In development", status: "plan",
+    summary: "The Data Science &amp; ML module, powered by Epoch. This is the plan, not a promise: anything that isn't finished and tested moves to a later version.",
     groups: { "Planned": [
-      "Module system: each module has a manifest with its version, dependencies, the permissions it asks for, and an integrity check before it installs.",
-      "Modules never get your passwords, cookies, arbitrary files, shell commands or another module's data. Anything risky asks you first and runs in a restricted process.",
-      "Research &amp; Writing: a fuller document editor (styles, tables, equations, page numbers, comments) and the Writing Intelligence panel.",
-      "Security hardening across the browser and the add-on boundary."
+      "Data Science &amp; ML module: import CSV, JSON and Parquet, profile and clean datasets, chart them, and compare versions.",
+      "Epoch, AETHER's own training engine, runs on your PC: preprocessing, train/test splits, cross-validation, hyperparameter search, leakage checks, feature importance and error analysis.",
+      "Epoch is gaining gradient boosting, neural networks (MLP), linear SVM, text features, clustering and PCA, plus export to a scikit-learn script.",
+      "Experiments are saved with their data version and settings so you can repeat them."
     ] } },
+  { v: "0.4.0", date: "1 Nov 2026", status: "ship",
+    summary: "A built-in offline Writer, and the first installable module: Research &amp; Writing.",
+    groups: {
+      "Added": [
+        "Writer, built in and offline: styles, fonts, indents, line spacing, lists, tables, images, KaTeX equations, page breaks, find and replace, an outline, version history and autosave.",
+        "Writer templates: IEEE paper, APA paper, literature review, lab report, project report, thesis and letter. Citations from your library with IEEE, APA, MLA or Chicago bibliographies.",
+        "Import .docx, .md, .txt and .html; export Word (.docx), PDF, LaTeX with .bib, Markdown and HTML. Word layout is good for normal documents but not guaranteed for complex ones.",
+        "Writing Intelligence: suggestions on structure, missing evidence, clarity, style and formatting that you accept or reject one by one. The AI-writing check only reports signals; AETHER never rewrites text to evade detectors.",
+        "Module Store and the Research &amp; Writing module: literature-review workspace (research questions, screening, evidence matrix, outlines sent to the Writer), reference verification and an offline library.",
+        "Workbench (Ctrl+Shift+Space): apps open over the page or beside it in split view.",
+        "Optional Google account: sign-in in your normal browser with your own OAuth client; bookmarks and settings can sync through a hidden Drive folder. Passwords, history and cookies are never uploaded."
+      ],
+      "Security": [
+        "Modules get a scoped host: their own database, an allow-list of network hosts checked on every redirect, and no access to cookies, passwords, history or other modules' data.",
+        "You approve each module's permissions before it installs, and anything it runs. Safe mode starts AETHER with every module off."
+      ] } },
   { v: "0.3.2", date: "31 Oct 2026", status: "ship",
     summary: "Per-site switches for when ad blocking breaks a site.",
     groups: {
@@ -547,15 +563,15 @@ const CORE = [
   ["ship", "Focus and time tracking", "Local only; nothing leaves your machine."],
   ["prev", "Chrome extensions", "Unpacked extensions per profile. Toolbar popups don't work yet."],
   ["plan", "AI controls", "Optional local or cloud models that you configure. Off unless you turn it on."],
-  ["plan", "Add-on manager", "Install, update and remove modules, with a permission review."]
+  ["ship", "Module Store", "Install, turn off and remove modules after reviewing their permissions. Safe mode starts with every module off."]
 ];
 const STUDIO = [
-  ["prev", "Paper writer", "Templates for IEEE, APA 7, literature reviews, lab reports, internship reports and thesis chapters. Exports Markdown, LaTeX and HTML."],
-  ["prev", "Citations", "APA, MLA, Chicago and IEEE styles; BibTeX and RIS import."],
+  ["ship", "Writer", "A real document editor that works offline: styles, tables, images, equations, outline, version history and autosave. Templates for IEEE, APA, lab reports, theses and more."],
+  ["ship", "Citations", "Bibliographies in IEEE, APA, MLA or Chicago from your library; BibTeX and RIS import."],
   ["prev", "Notes and PDF annotations", "Per-workspace notebook and highlights on PDFs."],
   ["ship", "Engineering calculators", "Units-aware maths in the address bar and on any selected text."],
-  ["plan", "Full document editor", "Styles, tables, equations, headers and footers, page numbers, comments, revisions. DOCX and PDF export, tested on complex documents before we call it compatible."],
-  ["plan", "Writing Intelligence", "Flags unsupported claims, citation problems and repetition. You accept, reject or edit each suggestion. No AI-detector evasion."]
+  ["ship", "Import and export", "Open .docx, .md, .txt and .html. Export Word, PDF, LaTeX with .bib, Markdown and HTML. Complex Word layouts aren't guaranteed to match."],
+  ["ship", "Writing Intelligence", "Suggestions on structure, missing evidence, clarity and style that you accept or reject one by one. The AI-writing check only reports signals; no detector evasion."]
 ];
 const ICONS = {
   book: '<path d="M2.5 3.5c2-.8 3.8-.6 5.5.6 1.7-1.2 3.5-1.4 5.5-.6v9c-2-.8-3.8-.6-5.5.6-1.7-1.2-3.5-1.4-5.5-.6zM8 4.1v9"/>',
@@ -571,14 +587,14 @@ const ICONS = {
   chart: '<path d="M2.5 13.5h11M4 11V8M7 11V5M10 11V7M13 11V3"/>'
 };
 const MODULES = [
-  ["book", "Research &amp; Writing", "prev", "Papers, citations, PDFs, document editing and literature review. Paper writer, citations, notes and PDF annotation are in preview today; source discovery, comparison matrices and source-linked drafting are coming.", "Never invents references, quotes, findings or research gaps. Offline libraries and drafts keep working without internet."],
+  ["book", "Research &amp; Writing", "ship", "Install it from the Module Store. A literature-review workspace with research questions, screening, an evidence matrix and review outlines you send to the Writer, plus reference verification and an offline library.", "Flags missing or suspicious citations instead of inventing details. Never invents references, quotes, findings or research gaps."],
   ["chip", "Electronics &amp; ECE", "plan", "Datasheets, component selection, SPICE simulation through an established engine, PCB design hand-off and bills of materials with supplier links.", "Not every part in a catalogue can be simulated. Prices and stock come only from live, verifiable sources."],
   ["code", "Computer Science &amp; Embedded Dev", "plan", "Code editor, compilers, debugging, API testing, terminals and embedded firmware workflows for Python, C, C++, JavaScript and TypeScript.", "Uses toolchains on your machine and says when one is missing. Never runs code from a page, project, module or AI answer on its own."],
   ["plane", "Aerospace &amp; Space", "plan", "Aircraft performance, aerodynamics, orbital mechanics and avionics, plus communications and RF: link budgets, antennas, spectrum analysis and SDR workflows. Links to CAD and CFD tools.", "Integrates with CAD and CFD tools; it doesn't replace them."],
   ["gear", "Mechanical Engineering", "plan", "CAD integrations, materials, mechanics, manufacturing and thermal calculations.", "Calculations show their inputs, units and assumptions."],
   ["beam", "Civil &amp; Structural", "plan", "Structural calculation workflows, materials, surveying and quantity estimation.", "Not a certified structural solver."],
   ["flask", "Biotechnology &amp; Bioengineering", "plan", "Molecular structures, sequences, lab notebooks and analysis.", "Not a full biological analysis suite."],
-  ["chart", "Data Science &amp; AI", "plan", "Notebooks, datasets, machine learning and reproducible experiment records.", "Runs on your machine; nothing is uploaded unless you choose to."],
+  ["chart", "Data Science &amp; ML", "next", "Datasets, cleaning, charts and model training, powered by <b>Epoch</b>, AETHER's own ML engine. Epoch trains on your PC with preprocessing, cross-validation, hyperparameter search, leakage checks and feature importance. Gradient boosting, neural networks, SVM, clustering and PCA are being added.", "Epoch is built for tabular and text data on a desktop CPU, not for training large deep-learning models. Nothing is uploaded unless you choose to."],
   ["sigma", "Mathematics, Physics &amp; Scientific Computing", "plan", "Symbolic and numerical maths, physics calculations, plotting and scientific computing, with units carried through every step.", "Shows the method and assumptions behind each result; it doesn't hide approximations."],
   ["folder", "Project Intelligence &amp; Lab", "plan", "Shared project files, calculations, tests, revisions and deliverables. Link a datasheet spec to a circuit requirement and see what is satisfied, violated or still unknown.", "Every recommendation links back to its source, inputs or test result."]
 ];
@@ -607,12 +623,13 @@ const EXPLORE = [
     ],
     shots: [["p-Privacy.png", "The Privacy panel shows what was blocked on each site"], ["passwords-aviation.png", "The password manager, in the Aviation theme"]] },
   { id: "research", tab: "Research and writing", title: "From sources to a paper, in one window",
-    lede: "These tools work today as a preview. The full Studio document editor is still being built.",
+    lede: "In 0.4.0 the built-in Writer handles real documents offline, and the Research &amp; Writing module adds a literature-review workspace. The screenshot below is from the earlier paper writer.",
     items: [
-      ["Paper writer", "Templates for IEEE, APA 7, literature review, lab report, technical report and thesis chapter.", "Preview"],
-      ["Exports", "Markdown, LaTeX and HTML with your bibliography.", "Preview"],
-      ["Citations", "APA, MLA, Chicago and IEEE; import BibTeX and RIS.", "Preview"],
+      ["Writer", "Templates for IEEE, APA, literature review, lab report, project report, thesis and letter.", "0.4.0"],
+      ["Exports", "Word, PDF, LaTeX with .bib, Markdown and HTML.", "0.4.0"],
+      ["Citations", "APA, MLA, Chicago and IEEE; import BibTeX and RIS.", ""],
       ["Notes and PDF annotation", "Per-workspace notebook; highlights on PDFs.", "Preview"],
+      ["Writing Intelligence", "Accept or reject each suggestion; no detector evasion.", "0.4.0"],
       ["Research bangs", "<code>!scholar</code>, <code>!arxiv</code>, <code>!ieee</code>, <code>!doi</code> search straight from the address bar.", ""]
     ],
     shots: [["p-Writer.png", "Start a paper from a template"]] },
@@ -646,6 +663,7 @@ const SEC_ON = [
   ["Dangerous addresses are refused", "<code>javascript:</code>, <code>data:</code>, <code>vbscript:</code> and similar URLs can't be typed or pasted."],
   ["Permissions are asked per site", "Camera, mic, location and notifications prompt each time unless you choose to remember."],
   ["Updates are checksum-verified", "The installer's SHA-256 must match before it runs."],
+  ["Modules are fenced in", "Each module gets its own database and an allow-list of sites, and can't reach cookies, passwords, history or other modules. Safe mode turns them all off."],
   ["No telemetry", "No account and no cloud. Your data stays on your machine."]
 ];
 const SEC_OFF = [
@@ -660,7 +678,7 @@ const SEC_OFF = [
 /* ===== rendering ===== */
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => s; // content above is authored here, trusted
-const pill = st => ({ ship: '<i class="pill s-ship">Available</i>', prev: '<i class="pill s-prev">Preview</i>', plan: '<i class="pill s-plan">Planned</i>' })[st];
+const pill = st => ({ ship: '<i class="pill s-ship">Available</i>', prev: '<i class="pill s-prev">Preview</i>', next: '<i class="pill s-plan">Next · 0.5.0</i>', plan: '<i class="pill s-plan">Planned</i>' })[st];
 
 document.querySelectorAll("[data-latest]").forEach(n => n.textContent = RELEASE.latest);
 
@@ -713,7 +731,7 @@ function showVer(vn) {
   const groups = Object.entries(v.groups).map(([g, list]) => `<div class="grp ${g === "Known issue" ? "known" : ""}"><h4>${g}</h4><ul>${list.map(x => `<li>${x}</li>`).join("")}</ul></div>`).join("");
   const dl = v.status === "plan" ? "" : v.v === RELEASE.latest
     ? `<div><a class="btn btn-primary btn-sm" href="#download" data-dl>Download ${v.v}</a></div>`
-    : `<p class="vsum" style="font-size:.88rem">Older installers aren't published here. Install the latest version; it keeps your data.</p>`;
+    : `<p class="vsum" style="font-size:.88rem">Older installers stay on <a href="https://github.com/Kailu687/AetherBrowser/releases">GitHub Releases</a>. The latest version keeps your data when installed over an older one.</p>`;
   $("#vCard").innerHTML = `<div class="vcard-head"><h3>${v.v}</h3><span class="vd">${v.date}</span>${statusPill(v)}</div><p class="vsum">${v.summary}</p>${groups}${dl}`;
   wireDownloads();
 }
