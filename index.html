@@ -259,7 +259,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
 <!-- ================= HERO ================= -->
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow">Desktop browser · Windows · v<span data-latest>0.4.0</span></span>
+    <span class="eyebrow">Desktop browser · Windows · v<span data-latest>0.5.0</span></span>
     <h1>Browse deeply. <em>Build</em> without distraction.</h1>
     <p class="lede">AETHER is a private, local-first browser for engineers, students and researchers. Separate profiles that never share cookies, workspaces that remember where you were, strong ad blocking on by default, and engineering tools right in the address bar. No account, no cloud and no telemetry.</p>
     <div class="hero-cta">
@@ -331,7 +331,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
         <div class="layer-id">
           <span class="lv">Layer 3</span>
           <h3>AETHER Modules</h3>
-          <p>Installable toolkits for each discipline. Research &amp; Writing ships in 0.4.0. Data Science &amp; ML, powered by Epoch, comes next. The other modules follow in later releases.</p>
+          <p>Installable toolkits for each discipline. Two ship today: Research &amp; Writing, and Data Science &amp; ML powered by Epoch. The other modules follow in later releases.</p>
         </div>
         <div class="labs" id="labs"></div>
       </article>
@@ -344,7 +344,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Feature explorer</span>
-      <h2>What's in version <span data-latest>0.4.0</span></h2>
+      <h2>What's in version <span data-latest>0.5.0</span></h2>
       <p class="lede">Every item here is in the current installer. Screenshots are from the real app.</p>
     </div>
     <div class="tabs" role="tablist" aria-label="Feature areas" id="exTabs"></div>
@@ -416,7 +416,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
     <div class="bay">
       <div class="bay-main">
         <span class="eyebrow">Download</span>
-        <h2>AETHER <span data-latest>0.4.0</span> for Windows</h2>
+        <h2>AETHER <span data-latest>0.5.0</span> for Windows</h2>
         <div class="platforms">
           <span class="plat on">Windows 10/11 · x64</span>
           <span class="plat">macOS · not yet</span>
@@ -425,14 +425,14 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
         <div>
           <a class="btn btn-primary" href="#download" data-dl id="dlBtn">
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 2v8m0 0 3.2-3.2M8 10 4.8 6.8M2.5 13.5h11"/></svg>
-            <span id="dlLabel">Download AETHER-Setup-0.4.0.exe</span>
+            <span id="dlLabel">Download AETHER-Setup-0.5.0.exe</span>
           </a>
         </div>
         <p class="pending" id="dlPending" role="status">The public download link is being set up. Until then, the installer is available from the project's <code>releases</code> folder.</p>
         <dl class="spec">
-          <div><dt>File</dt><dd class="mono" id="dlFile">AETHER-Setup-0.4.0.exe</dd></div>
-          <div><dt>Size</dt><dd>97.0 MB (96,951,655 bytes)</dd></div>
-          <div><dt>SHA-256</dt><dd><span class="hash"><code id="dlHash">5575b44b501af06f2bbc5ce0f141a151e1780c1875421b414e6a600775db3abd</code><button class="copy" type="button" data-copy="dlHash">Copy</button></span></dd></div>
+          <div><dt>File</dt><dd class="mono" id="dlFile">AETHER-Setup-0.5.0.exe</dd></div>
+          <div><dt>Size</dt><dd>97.0 MB (97,022,658 bytes)</dd></div>
+          <div><dt>SHA-256</dt><dd><span class="hash"><code id="dlHash">cbb2f3b5dc28c90b3ef576f03b5078a5df9a5f884fdaabba5ef9e3465d563cfb</code><button class="copy" type="button" data-copy="dlHash">Copy</button></span></dd></div>
           <div><dt>Installs to</dt><dd>Your user account only. Adds desktop and Start menu shortcuts; you can pick the folder.</dd></div>
           <div><dt>Built on</dt><dd>Electron 38 (Chromium 140)</dd></div>
           <div><dt>Built by</dt><dd>GitHub Actions on Windows, straight from the <a href="https://github.com/Kailu687/AetherBrowser">public source</a>.</dd></div>
@@ -441,7 +441,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
       <div class="bay-main">
         <h3>Install in three steps</h3>
         <ol class="steps">
-          <li><b>Check the file.</b> In PowerShell, run <code>Get-FileHash .\AETHER-Setup-0.4.0.exe</code> and compare the result with the SHA-256 on this page.</li>
+          <li><b>Check the file.</b> In PowerShell, run <code>Get-FileHash .\AETHER-Setup-0.5.0.exe</code> and compare the result with the SHA-256 on this page.</li>
           <li><b>Run the installer.</b> The build isn't code-signed yet, so Windows SmartScreen may warn the first time. Choose <b>More info</b>, then <b>Run anyway</b>.</li>
           <li><b>Stay up to date.</b> When a newer version is available, AETHER offers <b>Restart and update</b>. It checks the new installer's SHA-256 before running it and brings your windows and tabs back afterwards.</li>
         </ol>
@@ -462,21 +462,29 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: 
 <script>
 /* ===== Edit this block when a release ships or the download host changes ===== */
 const RELEASE = {
-  latest: "0.4.0",
-  file: "AETHER-Setup-0.4.0.exe",
-  sha256: "5575b44b501af06f2bbc5ce0f141a151e1780c1875421b414e6a600775db3abd",
-  downloadUrl: "https://github.com/Kailu687/AetherBrowser/releases/download/v0.4.0/AETHER-Setup-0.4.0.exe"
+  latest: "0.5.0",
+  file: "AETHER-Setup-0.5.0.exe",
+  sha256: "cbb2f3b5dc28c90b3ef576f03b5078a5df9a5f884fdaabba5ef9e3465d563cfb",
+  downloadUrl: "https://github.com/Kailu687/AetherBrowser/releases/download/v0.5.0/AETHER-Setup-0.5.0.exe"
 };
 
 const VERSIONS = [
-  { v: "0.5.0", date: "In development", status: "plan",
-    summary: "The Data Science &amp; ML module, powered by Epoch. This is the plan, not a promise: anything that isn't finished and tested moves to a later version.",
-    groups: { "Planned": [
-      "Data Science &amp; ML module: import CSV, JSON and Parquet, profile and clean datasets, chart them, and compare versions.",
-      "Epoch, AETHER's own training engine, runs on your PC: preprocessing, train/test splits, cross-validation, hyperparameter search, leakage checks, feature importance and error analysis.",
-      "Epoch is gaining gradient boosting, neural networks (MLP), linear SVM, text features, clustering and PCA, plus export to a scikit-learn script.",
-      "Experiments are saved with their data version and settings so you can repeat them."
-    ] } },
+  { v: "0.5.0", date: "3 Nov 2026", status: "ship",
+    summary: "The Data Science &amp; ML module, powered by Epoch: AETHER's own ML engine, training on your PC with no Python, internet or account.",
+    groups: {
+      "Added": [
+        "Data Science &amp; ML module. It asks for only two permissions, its own storage and files you pick, and makes no network connections.",
+        "Datasets: open CSV/TSV, JSON, JSON Lines or Parquet; see the schema, missing values, distributions, duplicates, outliers and columns that look like personal data (emails, phone numbers, Aadhaar, PAN, card numbers, API keys).",
+        "Cleaning pipelines: filter, derive with a safe formula language, fill or drop missing values, deduplicate, scale, one-hot encode, group, sample, k-means clustering and PCA. Each saved version records its SHA-256 and steps, and exports as pandas code.",
+        "Charts: histograms, bar, line, scatter and box plots, correlation matrices, and drift between two dataset versions.",
+        "Epoch trainer with ten model families: baseline, ridge and logistic regression, k-nearest neighbours, naive Bayes, decision tree, random forest, gradient-boosted trees, neural networks (MLP) and linear SVM.",
+        "Binary, multi-class and regression targets; numeric, categorical and free-text columns (TF-IDF); balanced class weights; training and validation curves with early stopping.",
+        "Every run is checked for leakage first and compared with a baseline. Cross-validation and hyperparameter search use the training rows only; permutation importance and worst predictions show where a model fails.",
+        "Experiments: compare runs, write a report into the Writer, export or import models (imports are validated), predict new rows, and turn any run into a scikit-learn script."
+      ],
+      "Limits": [
+        "Epoch handles tabular and short-text data, up to 500,000 rows and 1,000 model inputs, on the CPU. It is not a deep-learning framework: no GPU, images, audio or transformers. SVM scores are not calibrated probabilities."
+      ] } },
   { v: "0.4.0", date: "1 Nov 2026", status: "ship",
     summary: "A built-in offline Writer, and the first installable module: Research &amp; Writing.",
     groups: {
@@ -594,7 +602,7 @@ const MODULES = [
   ["gear", "Mechanical Engineering", "plan", "CAD integrations, materials, mechanics, manufacturing and thermal calculations.", "Calculations show their inputs, units and assumptions."],
   ["beam", "Civil &amp; Structural", "plan", "Structural calculation workflows, materials, surveying and quantity estimation.", "Not a certified structural solver."],
   ["flask", "Biotechnology &amp; Bioengineering", "plan", "Molecular structures, sequences, lab notebooks and analysis.", "Not a full biological analysis suite."],
-  ["chart", "Data Science &amp; ML", "next", "Datasets, cleaning, charts and model training, powered by <b>Epoch</b>, AETHER's own ML engine. Epoch trains on your PC with preprocessing, cross-validation, hyperparameter search, leakage checks and feature importance. Gradient boosting, neural networks, SVM, clustering and PCA are being added.", "Epoch is built for tabular and text data on a desktop CPU, not for training large deep-learning models. Nothing is uploaded unless you choose to."],
+  ["chart", "Data Science &amp; ML", "ship", "Datasets, cleaning pipelines, charts and model training, powered by <b>Epoch</b>, AETHER's own ML engine. Ten model families from linear models to gradient-boosted trees, neural networks and SVM, with leakage checks, cross-validation, hyperparameter search and export to a scikit-learn script. No Python, internet or account needed.", "Tabular and short-text data, up to 500,000 rows and 1,000 inputs, on the CPU. Not a deep-learning framework: no GPU, images, audio or transformers."],
   ["sigma", "Mathematics, Physics &amp; Scientific Computing", "plan", "Symbolic and numerical maths, physics calculations, plotting and scientific computing, with units carried through every step.", "Shows the method and assumptions behind each result; it doesn't hide approximations."],
   ["folder", "Project Intelligence &amp; Lab", "plan", "Shared project files, calculations, tests, revisions and deliverables. Link a datasheet spec to a circuit requirement and see what is satisfied, violated or still unknown.", "Every recommendation links back to its source, inputs or test result."]
 ];
@@ -756,7 +764,7 @@ function compare() {
   }));
   const n = Object.values(merged).reduce((s, l) => s + l.length, 0);
   const head = `<p class="vsum">Updating from <b>${shipped[older].v}</b> to <b>${shipped[newer].v}</b> brings ${n} changes across ${span.length} release${span.length > 1 ? "s" : ""}.</p>`;
-  $("#cmpOut").innerHTML = head + ["Added", "Changed", "Fixed", "Known issue"].filter(g => merged[g]).map(g => `<div class="grp ${g === "Known issue" ? "known" : ""}"><h4>${g}</h4><ul>${merged[g].map(x => `<li>${x}</li>`).join("")}</ul></div>`).join("");
+  $("#cmpOut").innerHTML = head + ["Added", "Changed", "Fixed", "Security", "Limits", "Known issue"].filter(g => merged[g]).map(g => `<div class="grp ${g === "Known issue" ? "known" : ""}"><h4>${g}</h4><ul>${merged[g].map(x => `<li>${x}</li>`).join("")}</ul></div>`).join("");
 }
 $("#cmpFrom").addEventListener("change", compare); $("#cmpTo").addEventListener("change", compare);
 compare();
