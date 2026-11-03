@@ -23,7 +23,7 @@ Standing rules from Kailash:
 
 ## Where things are
 
-- Source of truth on the PC: `C:\Users\Kailash A\Desktop\Projects\Aether Browser`. There is no GitHub repo yet.
+- Source of truth: GitHub `Kailu687/AetherBrowser` (`main` = source, `gh-pages` = download site). Pushing a `v*` tag builds the Windows installer in GitHub Actions and publishes a Release. A copy also lives on the PC at `C:\Users\Kailash A\Desktop\Projects\Aether Browser`.
 - Installers: `releases\AETHER-Setup-<version>.exe`, plus `releases\latest.json` (the manifest that the in-app updater reads).
 
 ## Run, test and build (Windows, Node 22+)
@@ -69,6 +69,14 @@ The installed app then offers "Restart and update". On Linux, `dist:win` needs `
 - Every IPC handler validates its sender and payload.
 - Passwords are encrypted with Electron `safeStorage` and are never stored if encryption is unavailable.
 - Internal pages have no scripts.
+
+## 0.5.0: Data Science & ML module (Epoch)
+
+- Package `packages/module-data` (id `aether.module.data`, manifest 1.1.0), registered in `apps/desktop/src/main/addon-modules.ts` and `src/renderer/addon-modules.ts`. Apps: `data.datasets`, `data.trainer`, `data.experiments`.
+- **Epoch** is the built-in ML engine in `src/ml/`: `models.ts` (baseline, ridge, logistic, kNN, naive Bayes, tree, forest, dispatch), `epoch-models.ts` (gradient boosting, MLP, linear SVM), `unsupervised.ts` (k-means, PCA), `features.ts` (train-only preprocessing incl. TF-IDF text), `experiment.ts` (split, leakage, CV, search, metrics, importance), `artifact.ts` (validation of imported model files), `sklearn.ts` (Python export).
+- Only new third-party dependency: `hyparquet` 1.32.0 (MIT) for Parquet. See `packages/module-data/DEPS.md`.
+- Tests: `packages/module-data/test` (79) and an e2e test that installs the module, trains a boosted model and opens all three apps.
+- Not in this version: Python notebooks, local kernels, GPU, local AI model management.
 
 ## Current state (0.3.1)
 

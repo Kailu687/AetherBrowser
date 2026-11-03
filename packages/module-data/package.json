@@ -1,0 +1,24 @@
+{
+  "name": "@aether/module-data",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AETHER Data Science & ML module: datasets, profiling, cleaning pipelines and Epoch, the built-in machine-learning engine (trees, forests, boosting, neural networks, SVM, clustering, PCA).",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./ui": "./src/ui/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aether/plugin-api": "*",
+    "hyparquet": "1.32.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "license": "MIT"
+}

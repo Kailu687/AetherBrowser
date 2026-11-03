@@ -467,6 +467,34 @@ await test('Module Store: install Research & Writing and open its apps', async (
   await ui.click('.wb-btn:has-text("Back to web")');
 });
 
+await test('Module Store: install DS & ML and train with Epoch', async () => {
+  const st = await mod('aether.modules', 'state');
+  const data = st.catalog.find((m) => m.id === 'aether.module.data');
+  assert.ok(data, 'DS & ML module in catalog');
+  const after = await mod('aether.modules', 'install', { id: data.id, approved: data.permissions });
+  assert.ok(!after.error, JSON.stringify(after.error));
+  const rows = ['x,y,colour,label'];
+  for (let i = 0; i < 300; i++) { const x = Math.sin(i * 1.7) * 3, y = Math.cos(i * 0.9) * 3, c = ['red', 'green', 'blue'][i % 3]; rows.push(`${x.toFixed(3)},${y.toFixed(3)},${c},${2 * x - y + (c === 'red' ? 1 : 0) > 0 ? 'yes' : 'no'}`); }
+  const imported = await mod('aether.module.data', 'datasets.importText', { text: rows.join('\n'), name: 'e2e', format: 'csv' });
+  assert.ok(!imported.error, JSON.stringify(imported.error));
+  const versionId = imported.version?.id ?? imported.versionId ?? imported.id;
+  assert.ok(versionId, `version id in ${JSON.stringify(imported).slice(0, 200)}`);
+  const trained = await mod('aether.module.data', 'ml.train', { versionId, config: { target: 'label', features: ['x', 'y', 'colour'], task: 'classification', model: 'gbm', params: { rounds: 50 }, split: { strategy: 'stratified', testFraction: 0.25, seed: 1 } } });
+  assert.ok(!trained.error, JSON.stringify(trained.error));
+  assert.ok(trained.result.metrics.accuracy > 0.8, `accuracy ${trained.result.metrics.accuracy}`);
+  const py = await mod('aether.module.data', 'runs.sklearn', { runId: trained.runId });
+  assert.match(py, /HistGradientBoostingClassifier/);
+  await ui.click('.wb-launch');
+  for (const app of data.apps) {
+    await ui.locator('.wb-tab.home').click();
+    await until(async () => (await ui.locator('.wb-tile', { hasText: app.title }).count()) > 0, `tile ${app.title}`);
+    await ui.locator('.wb-tile', { hasText: app.title }).first().click();
+    await sleep(1200);
+    assert.equal(await ui.locator('.wb-app:not([hidden]) .boundary').count(), 0, `${app.title} rendered without error`);
+  }
+  await ui.click('.wb-btn:has-text("Back to web")');
+});
+
 await app.close().catch(() => {});
 server.close();
 rmSync(userData, { recursive: true, force: true });

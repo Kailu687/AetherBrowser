@@ -1,21 +1,18 @@
-## AETHER 0.4.0 — Writer + Research & Writing
+## AETHER 0.5.0 — Data Science & ML, powered by Epoch
 
-A privacy-first, local-first browser for engineering and research, now with a built-in **offline Writer** and the first installable module, **Research & Writing**.
+Everything in 0.4.0 (the browser, the built-in offline Writer and the Research & Writing module), plus the second installable module: **Data Science & ML**, with **Epoch**, AETHER's own machine-learning engine. It trains models on your PC with no Python, no internet and no account.
 
-### New
-- **Writer (built in, works offline).** A real document editor for papers and reports, not a Markdown box: styles, fonts and sizes, indent and first-line indent, line spacing, lists, tables, images, equations (KaTeX), page breaks, find and replace, an outline, version history and autosave. Templates: IEEE paper, APA paper, literature review, lab report, project report, thesis, letter.
-  - Citations from your library with a bibliography in IEEE, APA, MLA or Chicago.
-  - Import .docx, .md, .txt and .html. Export to Word (.docx), PDF, LaTeX (+ .bib), Markdown and HTML. Word layout compatibility is good for normal documents but not guaranteed for complex ones.
-  - **Writing Intelligence:** suggestions you accept or reject one by one (structure, missing evidence, clarity, style, formatting), and an **AI-writing check** that only reports signals. AETHER never "humanizes" text to evade detectors; write it, cite it, and disclose AI help where required.
-- **Module Store and Research & Writing module.** Install it from the Workbench (the ▦ button or Ctrl+Shift+Space). It adds a literature review workspace (research questions, screening, evidence matrix, review outlines sent to the Writer), reference verification that flags missing or suspicious citations instead of inventing details, an offline library and an opt-in reading trail. You approve each permission before it installs, and you can turn it off or remove it any time.
-- **Workbench:** apps open over the page or side by side with it (split view).
-- **Google account (optional, setup needed):** Settings → Google account. Sign-in happens in your normal browser, using your own Google OAuth client ID, and the token is encrypted on your PC. Bookmarks and settings can sync through a hidden AETHER folder in your Drive. Passwords, history and cookies are never uploaded.
+### New: Data Science & ML module
+Install it from the Workbench (▦ or Ctrl+Shift+Space → Module Store). It needs only two permissions: its own storage and files you pick. It makes no network connections.
+- **Datasets.** Open CSV/TSV, JSON, JSON Lines or Parquet. See the inferred schema, missing values, distributions, duplicates, outliers and columns that look like personal data (emails, phone numbers, Aadhaar, PAN, card numbers, API keys).
+- **Cleaning pipelines.** Filter, derive with a safe formula language, fill or drop missing values, deduplicate, scale, one-hot encode, group, sample, **k-means clustering** and **PCA**. Preview, save as a new version (with its SHA-256 and every step recorded), and export the steps as pandas code.
+- **Charts and comparison.** Histograms, bar, line, scatter and box plots, correlation matrices, and drift between two dataset versions.
+- **Epoch ML trainer.** Ten model families: baseline, ridge and logistic regression, k-nearest neighbours, naive Bayes, decision tree, random forest, **gradient-boosted trees**, **neural networks (MLP)** and **linear SVM**. Binary, multi-class and regression targets; numeric, categorical and **free-text** columns (TF-IDF); balanced class weights for imbalanced data; training and validation curves with early stopping.
+- **Honest evaluation.** Every run is checked for leakage first (target proxies, identifiers, rows on both sides of the split, group overlap), compared with a baseline and with its training score, and can use cross-validation and hyperparameter search on the training rows only. Permutation importance, worst predictions and per-group scores show where it fails.
+- **Experiments.** Compare runs, write a report into the Writer, export or import a model (imported files are validated before use), predict new rows, and turn any run into a **scikit-learn script** to continue in Python.
 
-### Security
-- Modules get a scoped host: their own database, an allow-list of network hosts (checked on every redirect), no access to cookies, passwords, history or other modules' data, and per-program approval for anything they run. **Safe mode** (Module Store → Restart in safe mode) starts with every module off.
-
-### Not in this release
-Code, Projects and Engineering apps and the other modules (DS & ML, Electronics & ECE, Developer, Aerospace, Mechanical, Civil, Biotech, Math/Physics) are being finished and tested, and will ship in later versions.
+### Limits
+Epoch is for tabular and short-text data, up to 500,000 rows and 1,000 model inputs, on the CPU. It is not a deep-learning framework: no GPU, images, audio or transformer models. Python notebooks and local AI model management come in a later version.
 
 ### Install
-Download `AETHER-Setup-0.4.0.exe` below and run it (Windows 10/11, 64-bit). It isn't code-signed yet, so Windows SmartScreen may warn you: choose **More info → Run anyway**. Check the download against the SHA-256 in `latest.json`.
+Download `AETHER-Setup-0.5.0.exe` below and run it (Windows 10/11, 64-bit). It isn't code-signed yet, so Windows SmartScreen may warn you: choose **More info → Run anyway**. Check the download against the SHA-256 in `latest.json`.
